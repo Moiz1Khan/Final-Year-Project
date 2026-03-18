@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 Final-Year-Project
 =======
 Synq Voice Agent
