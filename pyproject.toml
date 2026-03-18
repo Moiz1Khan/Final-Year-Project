@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synq-voice-agent"
+version = "0.1.0"
+description = "AI Voice Agent with wake word detection for smart room environments"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Synq"}
+]
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["synq*"]

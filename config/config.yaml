@@ -1,0 +1,54 @@
+# Synq Voice Agent - Production Configuration
+# API mode = production | Local mode = development/offline
+
+agent:
+  name: "Synq"
+  language: "en"
+
+# Mode: "api" = OpenAI Whisper + GPT + TTS | "local" = faster-whisper + patterns + pyttsx3
+mode: "api"
+
+# Memory: full history + semantic recall per user (API mode only)
+memory:
+  enabled: true
+
+# Gate: "none" | "wake_word" | "face"
+gate:
+  mode: "none"
+
+# TTS: "openai" (free with OpenAI key) | "elevenlabs" (low-latency, paid - switch when ready)
+tts:
+  engine: "openai"
+  elevenlabs:
+    voice_id: "21m00Tcm4TlvDq8ikWAM"  # Rachel
+    model_id: "eleven_flash_v2_5"
+    optimize_streaming_latency: 4  # 0-4, 4 = min delay
+
+# API services (when mode: api)
+api:
+  openai:
+    stt_model: "whisper-1"
+    nlu_model: "gpt-4o-mini"
+    tts_model: "tts-1"
+    tts_voice: "alloy"
+
+# Local services (when mode: local)
+whisper:
+  model_size: "base"
+  device: "cpu"
+  compute_type: "int8"
+
+# Wake word (for gate: wake_word)
+wake_word:
+  phrases: ["hey synq", "hi synq", "synq", "hey sync", "hi sync", "sync"]
+
+# Audio (PyAudio) - lower silence_duration = faster reply
+audio:
+  sample_rate: 16000
+  silence_threshold: 1000
+  silence_duration: 0.9
+  interrupt_threshold: 50000
+  interrupt_chunks: 3
+  device: null
+
+debug: false

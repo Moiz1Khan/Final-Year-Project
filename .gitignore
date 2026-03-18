@@ -1,0 +1,24 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Environment
+.env
+
+# Data (memory, ChromaDB)
+data/
+
+# Models (downloaded)
+models/
+*.onnx
+*.ppn
+
+# IDE
+.idea/
+.vscode/
+*.swp

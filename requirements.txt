@@ -1,0 +1,23 @@
+# Synq Voice Agent - Python 3.10+
+# Core
+numpy>=1.24.0,<2.0.0
+pyaudio>=0.2.14
+pygame>=2.5.0
+sounddevice>=0.4.6
+openai>=1.0.0
+elevenlabs>=1.0.0
+chromadb>=0.4.0
+
+# Wake Word - Porcupine (optional; install separately for precise detection)
+# pip install pvporcupine
+
+# Speech-to-Text
+faster-whisper>=1.0.0
+vosk>=0.3.45
+
+# Text-to-Speech
+pyttsx3>=2.90
+
+# Config
+pyyaml>=6.0
+python-dotenv>=1.0.0
