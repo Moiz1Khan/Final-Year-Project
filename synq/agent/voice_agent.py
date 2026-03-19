@@ -179,8 +179,10 @@ class VoiceAgent:
         print("Press Ctrl+C to exit\n")
 
         try:
+            import time
             while self._running:
                 self.tts.stop()
+                time.sleep(0.3)  # Let mic/audio release before next turn
 
                 if self.gate_mode == "face":
                     if not self._run_gate():
@@ -210,6 +212,12 @@ class VoiceAgent:
             print("\n\n[Synq] Stopping...")
         finally:
             self._running = False
+            try:
+                from synq.context_monitoring import stop_monitor
+
+                stop_monitor()
+            except ImportError:
+                pass
 
     def stop(self) -> None:
         self._running = False
@@ -318,6 +326,25 @@ def create_agent_from_config(
             compute_type=whisper_cfg.get("compute_type", "int8"),
             debug=debug,
         )
+
+    # Start context monitoring if enabled (background thread)
+    cm_cfg = cfg.get("context_monitoring", {})
+    if cm_cfg.get("enabled", False):
+        try:
+            from synq.context_monitoring import start_monitor
+
+            sd = cm_cfg.get("sensitive_data") or {}
+            start_monitor(
+                poll_interval_seconds=cm_cfg.get("poll_interval_seconds", 5),
+                idle_threshold_seconds=cm_cfg.get("idle_threshold_seconds", 60),
+                log_interval_seconds=cm_cfg.get("log_interval_seconds", 10),
+                truncate_window_title=sd.get("truncate_window_title", 0),
+                exclude_apps=sd.get("exclude_apps") or [],
+                verbose=debug,
+            )
+        except ImportError as e:
+            if debug:
+                print(f"[WARN] Context monitoring not available: {e}")
 
     return VoiceAgent(
         gate_mode=gate_mode,

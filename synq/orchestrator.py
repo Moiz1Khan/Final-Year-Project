@@ -33,7 +33,7 @@ class Orchestrator:
             if self._nlu is None:
                 from synq.services.openai_nlu import OpenAINLU
                 from synq.skills.registry import get_registry
-                from synq.skills import time_skill, general_skill
+                from synq.skills import time_skill, general_skill, activity_skill
                 self._registry = get_registry()
                 self._nlu = OpenAINLU(api_key=self.api_key, agent_name=self.agent_name)
                 self._nlu.register_modules(self._registry.list_for_nlu())

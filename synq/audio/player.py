@@ -40,6 +40,7 @@ class PygamePlayer:
 
         pygame.mixer.init()
         self._playing = True
+        interrupted = False
 
         try:
             pygame.mixer.music.load(str(path))
@@ -51,48 +52,51 @@ class PygamePlayer:
         if not interruptible:
             while pygame.mixer.music.get_busy() and self._playing:
                 time.sleep(0.1)
-            return True
-
-        # Monitor mic for interrupt
-        audio = pyaudio.PyAudio()
-        stream = audio.open(
-            format=pyaudio.paInt16,
-            channels=1,
-            rate=self.sample_rate,
-            input=True,
-            frames_per_buffer=self.chunk,
-        )
-
-        loud_chunks = 0
-        try:
-            while pygame.mixer.music.get_busy() and self._playing:
-                try:
-                    data = stream.read(self.chunk, exception_on_overflow=False)
-                except OSError:
-                    time.sleep(0.1)
-                    continue
-                rms = get_rms(data)
-                if rms > self.interrupt_threshold:
-                    loud_chunks += 1
-                    if loud_chunks >= self.interrupt_chunks:
-                        pygame.mixer.music.stop()
-                        self._playing = False
-                        stream.close()
-                        audio.terminate()
-                        return False
-                else:
-                    loud_chunks = 0
-                time.sleep(0.05)
-        finally:
+            time.sleep(0.3)  # Let Windows release audio device
+        else:
+            # Monitor mic for interrupt
+            audio = pyaudio.PyAudio()
+            stream = audio.open(
+                format=pyaudio.paInt16,
+                channels=1,
+                rate=self.sample_rate,
+                input=True,
+                frames_per_buffer=self.chunk,
+            )
+            loud_chunks = 0
             try:
-                stream.stop_stream()
-                stream.close()
-            except Exception:
-                pass
-            audio.terminate()
+                while pygame.mixer.music.get_busy() and self._playing:
+                    try:
+                        data = stream.read(self.chunk, exception_on_overflow=False)
+                    except OSError:
+                        time.sleep(0.1)
+                        continue
+                    rms = get_rms(data)
+                    if rms > self.interrupt_threshold:
+                        loud_chunks += 1
+                        if loud_chunks >= self.interrupt_chunks:
+                            pygame.mixer.music.stop()
+                            self._playing = False
+                            interrupted = True
+                            break
+                    else:
+                        loud_chunks = 0
+                    time.sleep(0.05)
+            finally:
+                try:
+                    stream.stop_stream()
+                    stream.close()
+                except Exception:
+                    pass
+                audio.terminate()
 
         self._playing = False
-        return True
+        time.sleep(0.3)  # Let Windows release mic before recorder uses it
+        try:
+            pygame.mixer.quit()
+        except Exception:
+            pass
+        return not interrupted
 
     def stop(self) -> None:
         """Stop playback."""

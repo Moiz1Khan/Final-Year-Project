@@ -79,6 +79,11 @@ Respond with a JSON object:
 }}
 
 Handle: greetings, time, help, thanks, goodbye. Route complex requests to the right module.
+
+IMPORTANT: For activity/screen/context questions, ALWAYS set "module": "activity":
+- "what was I doing", "what have I been working on", "summarize my activity", "what apps was I using"
+These MUST route to the activity module - do not respond yourself, set module: "activity" so the system can fetch real data.
+
 If unclear, ask for clarification. Be brief - this is voice, not text."""
 
         try:

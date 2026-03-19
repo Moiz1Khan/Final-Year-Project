@@ -52,3 +52,13 @@ audio:
   device: null
 
 debug: false
+
+# Context Monitoring - background activity tracking for Proactive Assistance
+context_monitoring:
+  enabled: true
+  poll_interval_seconds: 5
+  idle_threshold_seconds: 60
+  log_interval_seconds: 10
+  sensitive_data:
+    truncate_window_title: 80   # 0 = no truncation; truncate for privacy
+    exclude_apps: []            # e.g. ["lastpass.exe", "1password.exe"]
