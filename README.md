@@ -49,7 +49,7 @@ Default: `http://127.0.0.1:8765` — set `voice.synq_cloud.base_url` in `config/
 
 ## Configuration
 
-1. **`.env`** — copy from `.env.example`; set `OPENAI_API_KEY`, `ELEVENLABS_*` as needed for API mode, `SYNQ_GOOGLE_OAUTH_CLIENT_SECRETS_PATH` or `GOOGLE_CLIENT_SECRETS_PATH` for Google login + integrations, session/JWT secrets as in `.env.example`.
+1. **`.env`** — copy from `.env.example` locally (this file is **not** in git: GitHub **push protection** blocks commits that contain API keys). Set `OPENAI_API_KEY`, `ELEVENLABS_*` as needed for API mode, `SYNQ_GOOGLE_OAUTH_CLIENT_SECRETS_PATH` or `GOOGLE_CLIENT_SECRETS_PATH` for Google login + integrations, session/JWT secrets as in `.env.example`.
 2. **`config/config.yaml`** — `voice.backend`, `synq_cloud.base_url`, `mode`, `gate`, `tts`, etc.
 
 ### Google OAuth (web “Sign in with Google”)
