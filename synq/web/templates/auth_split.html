@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block outer %}
+<div class="auth-split-wrap">
+  <div class="auth-split-bg" aria-hidden="true">
+    <div class="auth-split-mesh"></div>
+    <div class="auth-split-gridlines"></div>
+    <div class="auth-split-orb auth-split-orb--a"></div>
+    <div class="auth-split-orb auth-split-orb--b"></div>
+  </div>
+  <header class="auth-split-header">
+    <a href="/" class="auth-split-brand">Synq</a>
+    <nav class="auth-split-nav">{% block nav %}{% endblock %}</nav>
+  </header>
+  <div class="auth-split-body">
+    <aside class="auth-split-visual">
+      {% block auth_visual %}
+      <div class="auth-visual-stack">
+        <p class="auth-visual-eyebrow">Voice-native console</p>
+        <h2 class="auth-visual-title">Operate your day from one intelligent surface.</h2>
+        <p class="auth-visual-copy">Calendar, mail, and agents—aligned to how you work. Built for focus, not noise.</p>
+        <div class="auth-visual-stats">
+          <div class="auth-stat-card" data-reveal>
+            <span class="auth-stat-label">Sessions</span>
+            <span class="auth-stat-value">24</span>
+            <span class="auth-stat-delta auth-stat-delta--up">+12%</span>
+          </div>
+          <div class="auth-stat-card" data-reveal>
+            <span class="auth-stat-label">Latency</span>
+            <span class="auth-stat-value">218<span class="auth-stat-unit">ms</span></span>
+            <span class="auth-stat-delta">p50</span>
+          </div>
+          <div class="auth-stat-card" data-reveal>
+            <span class="auth-stat-label">Uptime</span>
+            <span class="auth-stat-value">99.9<span class="auth-stat-unit">%</span></span>
+            <span class="auth-stat-delta auth-stat-delta--up">live</span>
+          </div>
+        </div>
+        <div class="auth-visual-chart" aria-hidden="true">
+          <svg class="auth-spark" viewBox="0 0 320 80" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="auth-spark-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="rgba(168, 85, 247, 0.45)" />
+                <stop offset="100%" stop-color="rgba(168, 85, 247, 0)" />
+              </linearGradient>
+            </defs>
+            <path class="auth-spark-fill" d="M0,55 L40,48 L80,52 L120,38 L160,42 L200,28 L240,35 L280,22 L320,30 L320,80 L0,80 Z" fill="url(#auth-spark-grad)" />
+            <path class="auth-spark-line" d="M0,55 L40,48 L80,52 L120,38 L160,42 L200,28 L240,35 L280,22 L320,30" fill="none" stroke="rgba(192, 132, 252, 0.9)" stroke-width="2" vector-effect="non-scaling-stroke" />
+          </svg>
+          <div class="auth-chart-bars">
+            <span style="--h: 42%"></span><span style="--h: 68%"></span><span style="--h: 55%"></span>
+            <span style="--h: 82%"></span><span style="--h: 61%"></span><span style="--h: 74%"></span>
+            <span style="--h: 48%"></span><span style="--h: 88%"></span><span style="--h: 52%"></span>
+          </div>
+        </div>
+      </div>
+      {% endblock %}
+    </aside>
+    <main class="auth-split-main">
+      <div class="auth-split-card">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+</div>
+{% endblock %}

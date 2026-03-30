@@ -1,0 +1,103 @@
+{% extends "base_console.html" %}
+{% block title %}Overview — Synq{% endblock %}
+{% block page_title %}Overview{% endblock %}
+{% block topbar_meta %}
+<span class="status-pill {% if voice_synced %}ok{% else %}muted{% endif %}">
+  <span class="status-dot"></span>
+  {% if voice_synced %}Voice session linked{% else %}Set voice user{% endif %}
+</span>
+{% endblock %}
+{% block content %}
+<nav class="mobile-nav">
+  <a href="/app">Overview</a>
+  <a href="/app/credentials">Credentials</a>
+  <a href="/docs" target="_blank" rel="noopener">API</a>
+</nav>
+
+<div class="bento">
+  <div class="bento-cell bento-hero span-8" data-tilt data-reveal>
+    <div class="bento-hero-grid">
+      <div class="bento-hero-copy">
+        <p class="bento-label">Workspace</p>
+        <h1>Hello, {{ user.name }}</h1>
+        <p class="sub">Manage Google OAuth, voice session, and API access from this console. Production voice runs through your Synq API with per-user isolation.</p>
+        <div class="dash-pill-row">
+          {% if request.query_params.get('voice') %}
+          <span class="status-pill ok"><span class="status-dot"></span> Voice user updated</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="dash-hero-chart" aria-hidden="true">
+        <svg class="dash-spark" viewBox="0 0 280 72" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="dash-spark-fill" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgba(168, 85, 247, 0.35)" />
+              <stop offset="100%" stop-color="rgba(168, 85, 247, 0)" />
+            </linearGradient>
+          </defs>
+          <path d="M0,52 L35,44 L70,48 L105,36 L140,40 L175,28 L210,34 L245,22 L280,30 L280,72 L0,72 Z" fill="url(#dash-spark-fill)" />
+          <path d="M0,52 L35,44 L70,48 L105,36 L140,40 L175,28 L210,34 L245,22 L280,30" fill="none" stroke="rgba(196, 181, 253, 0.9)" stroke-width="1.75" vector-effect="non-scaling-stroke" />
+        </svg>
+        <div class="dash-mini-bars">
+          <span style="--h: 45%"></span><span style="--h: 72%"></span><span style="--h: 58%"></span>
+          <span style="--h: 84%"></span><span style="--h: 62%"></span><span style="--h: 76%"></span>
+          <span style="--h: 50%"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bento-cell bento-stat span-4" data-tilt data-reveal>
+    <p class="bento-label">Identity</p>
+    <div class="stat-value">{{ user.id }}</div>
+    <div class="stat-label">Your user ID</div>
+    <p class="bento-footnote">{{ user_count }} account(s) in this database</p>
+  </div>
+
+  <div class="bento-cell span-5 row-2 bento-stack" data-tilt data-reveal>
+    <p class="bento-label">Voice agent</p>
+    <h2>Session &amp; JWT</h2>
+    <p>Logging in writes <span class="code-inline">data/auth_token.json</span> for <strong>synq_cloud</strong> mode. Use this device as the active voice user after switching accounts.</p>
+    <form method="post" action="/app/active-voice-user" class="dash-voice-form">
+      <button type="submit" class="btn-primary btn-primary--block">Use this account for voice</button>
+    </form>
+    <p class="hint dash-cli-hint">CLI: <span class="code-inline">SYNQ_ACTIVE_USER_ID={{ user.id }}</span></p>
+  </div>
+
+  <div class="bento-cell span-4" data-tilt data-reveal>
+    <p class="bento-label">Auth file</p>
+    <h2>JWT on disk</h2>
+    {% if has_jwt %}
+    <span class="status-pill ok"><span class="status-dot"></span> auth_token.json present</span>
+    {% else %}
+    <span class="status-pill warn">Missing — sign in again</span>
+    {% endif %}
+    <p class="bento-gap-top">Required for remote voice client to call your API as you.</p>
+  </div>
+
+  <div class="bento-cell span-3" data-tilt data-reveal>
+    <p class="bento-label">Google</p>
+    <h2>Integration</h2>
+    {% if google_configured %}
+    <span class="status-pill ok">Client / token configured</span>
+    {% else %}
+    <span class="status-pill muted">Incomplete</span>
+    <p class="bento-gap-top">Add OAuth client under Credentials.</p>
+    {% endif %}
+  </div>
+
+  <div class="bento-cell span-6" data-tilt data-reveal>
+    <p class="bento-label">Shortcuts</p>
+    <div class="quick-links">
+      <a href="/app/credentials">Credentials <span>→</span></a>
+      <a href="/docs" target="_blank" rel="noopener">OpenAPI / Try requests <span>↗</span></a>
+    </div>
+  </div>
+
+  <div class="bento-cell span-6" data-tilt data-reveal>
+    <p class="bento-label">Reference</p>
+    <h2>Product flow</h2>
+    <p class="dash-flow-copy">Each person uses <span class="code-inline">/signup</span> (or the link on the login page) to create their own account → connect Google → optional token JSON for server-side Gmail/Calendar → set voice user → run <span class="code-inline">scripts/run_voice_agent.py</span> with <span class="code-inline">voice.backend: synq_cloud</span> in config.</p>
+  </div>
+</div>
+{% endblock %}

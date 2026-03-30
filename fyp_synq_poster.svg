@@ -1,0 +1,331 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="2600" viewBox="0 0 1800 2600" role="img" aria-labelledby="title desc">
+  <title id="title">Synq Voice Agent Final Year Project Poster</title>
+  <desc id="desc">Colorful interactive architecture poster for Synq voice agent showing objectives, system components, and data flow.</desc>
+
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080B1D"/>
+      <stop offset="45%" stop-color="#121B42"/>
+      <stop offset="100%" stop-color="#2A1252"/>
+    </linearGradient>
+
+    <radialGradient id="blob1" cx="25%" cy="20%" r="45%">
+      <stop offset="0%" stop-color="#25F4EE" stop-opacity="0.40"/>
+      <stop offset="100%" stop-color="#25F4EE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blob2" cx="80%" cy="30%" r="40%">
+      <stop offset="0%" stop-color="#FF5CF0" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#FF5CF0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blob3" cx="55%" cy="85%" r="45%">
+      <stop offset="0%" stop-color="#7CFF6B" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#7CFF6B" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="titleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#66F8FF"/>
+      <stop offset="48%" stop-color="#C07BFF"/>
+      <stop offset="100%" stop-color="#FF7ED6"/>
+    </linearGradient>
+
+    <linearGradient id="panelStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6FF8FF"/>
+      <stop offset="100%" stop-color="#A47DFF"/>
+    </linearGradient>
+
+    <linearGradient id="connectorGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7AFFF7"/>
+      <stop offset="50%" stop-color="#B491FF"/>
+      <stop offset="100%" stop-color="#FF79D7"/>
+    </linearGradient>
+
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="bigGlow" x="-50%" y="-50%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="15" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <marker id="arrowHead" markerWidth="14" markerHeight="10" refX="12" refY="5" orient="auto">
+      <polygon points="0,0 14,5 0,10" fill="#9EE8FF"/>
+    </marker>
+
+    <style>
+      .bg-grid { stroke: rgba(255,255,255,0.08); stroke-width: 1; }
+      .title-main { font: 800 110px 'Segoe UI', Tahoma, sans-serif; fill: url(#titleGradient); letter-spacing: 2px; }
+      .title-sub { font: 600 42px 'Segoe UI', Tahoma, sans-serif; fill: #DDE8FF; }
+      .chip { font: 700 24px 'Segoe UI', Tahoma, sans-serif; fill: #10132B; }
+      .section-title { font: 800 44px 'Segoe UI', Tahoma, sans-serif; fill: #EAF2FF; }
+      .card-title { font: 700 28px 'Segoe UI', Tahoma, sans-serif; fill: #F3F7FF; }
+      .body { font: 500 24px 'Segoe UI', Tahoma, sans-serif; fill: #D9E5FF; }
+      .small { font: 500 21px 'Segoe UI', Tahoma, sans-serif; fill: #C7D9FF; }
+      .muted { font: 500 20px 'Segoe UI', Tahoma, sans-serif; fill: #B3C3EA; }
+      .white { fill: #F9FCFF; }
+      .panel {
+        fill: rgba(15, 21, 52, 0.62);
+        stroke: url(#panelStroke);
+        stroke-width: 2.5;
+      }
+      .module {
+        fill: rgba(24, 33, 74, 0.82);
+        stroke: rgba(134, 210, 255, 0.65);
+        stroke-width: 2;
+        transition: transform 0.25s ease, filter 0.25s ease, stroke 0.25s ease;
+      }
+      .module:hover {
+        transform: scale(1.02);
+        stroke: #9BEEFF;
+        filter: url(#softGlow);
+      }
+      .obj-card {
+        fill: rgba(24, 35, 80, 0.78);
+        stroke: rgba(172, 158, 255, 0.85);
+        stroke-width: 2;
+        transition: transform 0.25s ease, filter 0.25s ease;
+      }
+      .obj-card:hover {
+        transform: translateY(-4px);
+        filter: url(#softGlow);
+      }
+      .connector {
+        stroke: url(#connectorGradient);
+        stroke-width: 5;
+        fill: none;
+        marker-end: url(#arrowHead);
+        stroke-linecap: round;
+        stroke-dasharray: 14 10;
+        animation: flow 5s linear infinite;
+      }
+      .pulse-dot {
+        fill: #78F9FF;
+        filter: url(#softGlow);
+        animation: pulse 2.4s ease-in-out infinite;
+      }
+      .float-a { animation: floatA 7s ease-in-out infinite; transform-origin: center; }
+      .float-b { animation: floatB 6.2s ease-in-out infinite; transform-origin: center; }
+      @keyframes flow { to { stroke-dashoffset: -96; } }
+      @keyframes pulse {
+        0%, 100% { opacity: 0.5; r: 6; }
+        50% { opacity: 1; r: 10; }
+      }
+      @keyframes floatA {
+        0%,100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+      @keyframes floatB {
+        0%,100% { transform: translateY(0px); }
+        50% { transform: translateY(8px); }
+      }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1800" height="2600" fill="url(#bgGradient)"/>
+  <rect x="0" y="0" width="1800" height="2600" fill="url(#blob1)"/>
+  <rect x="0" y="0" width="1800" height="2600" fill="url(#blob2)"/>
+  <rect x="0" y="0" width="1800" height="2600" fill="url(#blob3)"/>
+
+  <g opacity="0.25">
+    <path class="bg-grid" d="M100 0V2600 M250 0V2600 M400 0V2600 M550 0V2600 M700 0V2600 M850 0V2600 M1000 0V2600 M1150 0V2600 M1300 0V2600 M1450 0V2600 M1600 0V2600 M1750 0V2600"/>
+    <path class="bg-grid" d="M0 180H1800 M0 360H1800 M0 540H1800 M0 720H1800 M0 900H1800 M0 1080H1800 M0 1260H1800 M0 1440H1800 M0 1620H1800 M0 1800H1800 M0 1980H1800 M0 2160H1800 M0 2340H1800 M0 2520H1800"/>
+  </g>
+
+  <g transform="translate(100,70)">
+    <rect x="0" y="0" width="1600" height="360" rx="38" class="panel" filter="url(#bigGlow)"/>
+    <text x="70" y="125" class="title-main">SYNQ VOICE AGENT</text>
+    <text x="74" y="190" class="title-sub">Final Year Project Poster</text>
+    <text x="74" y="245" class="body">AI-powered voice assistant with modular skills, productivity automation, and proactive context-aware support.</text>
+
+    <rect x="70" y="275" width="320" height="62" rx="31" fill="#71F4FF"/>
+    <text x="140" y="316" class="chip">Mode: API + Local</text>
+
+    <rect x="420" y="275" width="360" height="62" rx="31" fill="#B78DFF"/>
+    <text x="490" y="316" class="chip">Realtime Voice Pipeline</text>
+
+    <rect x="810" y="275" width="320" height="62" rx="31" fill="#FF8EDC"/>
+    <text x="880" y="316" class="chip">Modular Skills</text>
+  </g>
+
+  <g transform="translate(100,490)">
+    <rect x="0" y="0" width="740" height="760" rx="34" class="panel"/>
+    <text x="48" y="78" class="section-title">Project Objectives</text>
+
+    <g class="float-a">
+      <rect x="45" y="125" width="650" height="108" rx="20" class="obj-card"/>
+      <text x="74" y="176" class="card-title">1) Natural Voice Interaction</text>
+      <text x="74" y="212" class="small">Enable seamless speech input/output with low-latency STT and TTS.</text>
+    </g>
+
+    <g class="float-b">
+      <rect x="45" y="255" width="650" height="108" rx="20" class="obj-card"/>
+      <text x="74" y="306" class="card-title">2) Intelligent Task Automation</text>
+      <text x="74" y="342" class="small">Support tasks, reminders, calendar, and email actions via voice commands.</text>
+    </g>
+
+    <g class="float-a">
+      <rect x="45" y="385" width="650" height="108" rx="20" class="obj-card"/>
+      <text x="74" y="436" class="card-title">3) Context-Aware Assistance</text>
+      <text x="74" y="472" class="small">Monitor user activity to provide proactive, personalized assistance.</text>
+    </g>
+
+    <g class="float-b">
+      <rect x="45" y="515" width="650" height="108" rx="20" class="obj-card"/>
+      <text x="74" y="566" class="card-title">4) Extensible Skill Architecture</text>
+      <text x="74" y="602" class="small">Design a modular system where new skills can be integrated easily.</text>
+    </g>
+
+    <g class="float-a">
+      <rect x="45" y="645" width="650" height="88" rx="20" class="obj-card"/>
+      <text x="74" y="697" class="card-title">5) Robust Hybrid Deployment</text>
+      <text x="74" y="729" class="small">Provide both cloud API mode and local offline-compatible mode.</text>
+    </g>
+  </g>
+
+  <g transform="translate(870,490)">
+    <rect x="0" y="0" width="830" height="1900" rx="34" class="panel"/>
+    <text x="48" y="78" class="section-title">System Architecture Diagram</text>
+    <text x="48" y="116" class="muted">Interactive view: hover modules to highlight components.</text>
+
+    <g>
+      <rect x="70" y="160" width="280" height="120" rx="18" class="module"/>
+      <text x="100" y="214" class="card-title">User Voice Input</text>
+      <text x="100" y="248" class="small">Microphone / commands</text>
+
+      <rect x="470" y="160" width="290" height="120" rx="18" class="module"/>
+      <text x="500" y="214" class="card-title">Voice Agent Core</text>
+      <text x="500" y="248" class="small">record + gate + control</text>
+
+      <path class="connector" d="M350 220 C395 220, 420 220, 470 220"/>
+      <circle cx="410" cy="220" class="pulse-dot"/>
+    </g>
+
+    <g>
+      <rect x="70" y="350" width="220" height="110" rx="16" class="module"/>
+      <text x="100" y="395" class="card-title">STT Layer</text>
+      <text x="100" y="427" class="small">Whisper / faster-whisper</text>
+
+      <rect x="320" y="350" width="220" height="110" rx="16" class="module"/>
+      <text x="350" y="395" class="card-title">NLU Layer</text>
+      <text x="350" y="427" class="small">GPT-4o-mini + intents</text>
+
+      <rect x="570" y="350" width="190" height="110" rx="16" class="module"/>
+      <text x="600" y="395" class="card-title">TTS Layer</text>
+      <text x="600" y="427" class="small">OpenAI / ElevenLabs</text>
+
+      <path class="connector" d="M470 280 C470 312, 180 312, 180 350"/>
+      <path class="connector" d="M470 280 C470 312, 430 312, 430 350"/>
+      <path class="connector" d="M470 280 C470 312, 665 312, 665 350"/>
+    </g>
+
+    <g>
+      <rect x="70" y="560" width="690" height="170" rx="20" class="module"/>
+      <text x="100" y="614" class="card-title">Skill Router (synq/orchestrator.py)</text>
+      <text x="100" y="650" class="small">Routes intents to modular skills: productivity, email, future skills</text>
+      <text x="100" y="684" class="small">Maintains conversational action flow and execution policy</text>
+
+      <path class="connector" d="M180 460 C180 510, 220 530, 240 560"/>
+      <path class="connector" d="M430 460 C430 510, 415 530, 410 560"/>
+      <path class="connector" d="M665 460 C665 510, 610 530, 560 560"/>
+    </g>
+
+    <g>
+      <rect x="70" y="780" width="320" height="150" rx="18" class="module"/>
+      <text x="100" y="834" class="card-title">Productivity Skill</text>
+      <text x="100" y="868" class="small">tasks, reminders, schedules</text>
+      <text x="100" y="900" class="small">semantic task search</text>
+
+      <rect x="440" y="780" width="320" height="150" rx="18" class="module"/>
+      <text x="470" y="834" class="card-title">Memory Layer</text>
+      <text x="470" y="868" class="small">SQLite + vector recall</text>
+      <text x="470" y="900" class="small">conversation continuity</text>
+
+      <path class="connector" d="M350 730 C350 760, 250 760, 250 780"/>
+      <path class="connector" d="M480 730 C480 760, 600 760, 600 780"/>
+    </g>
+
+    <g>
+      <rect x="70" y="980" width="220" height="125" rx="16" class="module"/>
+      <text x="100" y="1030" class="card-title">Task Storage</text>
+      <text x="100" y="1062" class="small">state + db files</text>
+
+      <rect x="320" y="980" width="220" height="125" rx="16" class="module"/>
+      <text x="350" y="1030" class="card-title">Vector Store</text>
+      <text x="350" y="1062" class="small">Chroma embeddings</text>
+
+      <rect x="570" y="980" width="190" height="125" rx="16" class="module"/>
+      <text x="600" y="1030" class="card-title">Context DB</text>
+      <text x="600" y="1062" class="small">activity monitoring</text>
+
+      <path class="connector" d="M250 930 C250 952, 180 952, 180 980"/>
+      <path class="connector" d="M250 930 C250 952, 430 952, 430 980"/>
+      <path class="connector" d="M600 930 C600 952, 665 952, 665 980"/>
+    </g>
+
+    <g>
+      <rect x="70" y="1160" width="690" height="170" rx="20" class="module"/>
+      <text x="100" y="1214" class="card-title">Google Integrations + Monitoring</text>
+      <text x="100" y="1248" class="small">Gmail polling notifications + Calendar events + OAuth token management</text>
+      <text x="100" y="1282" class="small">Secure token cache and API synchronization</text>
+
+      <path class="connector" d="M250 1105 C250 1132, 250 1132, 250 1160"/>
+      <path class="connector" d="M430 1105 C430 1132, 430 1132, 430 1160"/>
+      <path class="connector" d="M665 1105 C665 1132, 665 1132, 665 1160"/>
+    </g>
+
+    <g>
+      <rect x="70" y="1380" width="690" height="190" rx="22" class="module"/>
+      <text x="100" y="1438" class="card-title">Response Generation + Playback</text>
+      <text x="100" y="1472" class="small">Skill output -> NLU refinement -> TTS synthesis -> pygame playback</text>
+      <text x="100" y="1506" class="small">Interrupt handling for natural conversation turn-taking</text>
+      <text x="100" y="1540" class="small">Final voice response delivered to user</text>
+
+      <path class="connector" d="M415 1330 C415 1355, 415 1360, 415 1380"/>
+    </g>
+
+    <g>
+      <rect x="220" y="1640" width="390" height="120" rx="20" fill="rgba(110,255,245,0.16)" stroke="#82FFF4" stroke-width="2.2" filter="url(#softGlow)"/>
+      <text x="270" y="1691" class="card-title white">Output: Smart Voice Assistance</text>
+      <text x="270" y="1724" class="small">accurate, proactive, personalized</text>
+      <path class="connector" d="M415 1570 C415 1600, 415 1612, 415 1640"/>
+      <circle cx="415" cy="1608" class="pulse-dot"/>
+    </g>
+
+    <text x="48" y="1850" class="muted">Tech Stack: Python, OpenAI APIs, Whisper, Chroma, SQLite, Gmail/Calendar APIs, PyAudio, pygame</text>
+  </g>
+
+  <g transform="translate(100,1290)">
+    <rect x="0" y="0" width="740" height="1100" rx="34" class="panel"/>
+    <text x="48" y="78" class="section-title">Key Innovation & Impact</text>
+
+    <rect x="45" y="130" width="650" height="220" rx="22" class="obj-card"/>
+    <text x="76" y="188" class="card-title">Hybrid Intelligence</text>
+    <text x="76" y="226" class="small">Combines cloud-level reasoning (API mode) with</text>
+    <text x="76" y="260" class="small">local/offline-friendly operation (local mode) for resilience.</text>
+    <text x="76" y="294" class="small">This enables continuous assistance across connectivity conditions.</text>
+
+    <rect x="45" y="380" width="650" height="220" rx="22" class="obj-card"/>
+    <text x="76" y="438" class="card-title">Context + Productivity Fusion</text>
+    <text x="76" y="476" class="small">Integrates contextual activity signals, memory, and productivity</text>
+    <text x="76" y="510" class="small">skills to move beyond Q/A toward proactive digital assistance.</text>
+    <text x="76" y="544" class="small">Results in better task follow-through and user efficiency.</text>
+
+    <rect x="45" y="630" width="650" height="220" rx="22" class="obj-card"/>
+    <text x="76" y="688" class="card-title">Scalable Skill-Centric Design</text>
+    <text x="76" y="726" class="small">Modular skill architecture supports future extensions such as</text>
+    <text x="76" y="760" class="small">domain-specific assistants, analytics, and multi-user support.</text>
+    <text x="76" y="794" class="small">The framework is suitable for real-world assistant products.</text>
+
+    <text x="48" y="940" class="section-title">Future Extensions</text>
+    <text x="75" y="993" class="body">- Enhanced wake-word/face-gate security</text>
+    <text x="75" y="1036" class="body">- Advanced recommendation and planning engine</text>
+    <text x="75" y="1079" class="body">- Mobile companion app for cross-device continuity</text>
+  </g>
+</svg>

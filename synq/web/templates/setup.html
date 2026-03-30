@@ -1,0 +1,67 @@
+{% extends "auth_split.html" %}
+{% block title %}Setup — Synq{% endblock %}
+{% block nav %}
+<span class="auth-split-muted">First-time setup</span>
+{% endblock %}
+{% block auth_visual %}
+<div class="auth-visual-stack">
+  <p class="auth-visual-eyebrow">Installation</p>
+  <h2 class="auth-visual-title">Initialize Synq on this machine.</h2>
+  <p class="auth-visual-copy">Create the owner account and attach your Google OAuth client. AI provider keys stay on the server.</p>
+  <div class="auth-visual-stats">
+    <div class="auth-stat-card" data-reveal>
+      <span class="auth-stat-label">Step</span>
+      <span class="auth-stat-value">1<span class="auth-stat-unit">/2</span></span>
+      <span class="auth-stat-delta">Account</span>
+    </div>
+    <div class="auth-stat-card" data-reveal>
+      <span class="auth-stat-label">Step</span>
+      <span class="auth-stat-value">2<span class="auth-stat-unit">/2</span></span>
+      <span class="auth-stat-delta">Google</span>
+    </div>
+    <div class="auth-stat-card" data-reveal>
+      <span class="auth-stat-label">Mode</span>
+      <span class="auth-stat-value">Local</span>
+      <span class="auth-stat-delta auth-stat-delta--up">secure</span>
+    </div>
+  </div>
+  <div class="auth-visual-chart" aria-hidden="true">
+    <svg class="auth-spark" viewBox="0 0 320 80" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="auth-spark-grad-setup" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="rgba(129, 140, 248, 0.4)" />
+          <stop offset="100%" stop-color="rgba(129, 140, 248, 0)" />
+        </linearGradient>
+      </defs>
+      <path d="M0,60 L50,45 L100,50 L150,32 L200,40 L250,25 L320,20 L320,80 L0,80 Z" fill="url(#auth-spark-grad-setup)" />
+      <path d="M0,60 L50,45 L100,50 L150,32 L200,40 L250,25 L320,20" fill="none" stroke="rgba(165, 180, 252, 0.95)" stroke-width="2" vector-effect="non-scaling-stroke" />
+    </svg>
+    <div class="auth-chart-bars">
+      <span style="--h: 38%"></span><span style="--h: 72%"></span><span style="--h: 58%"></span>
+      <span style="--h: 85%"></span><span style="--h: 64%"></span><span style="--h: 78%"></span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block content %}
+<h1 class="auth-form-title">Welcome to Synq</h1>
+<p class="auth-form-lead">Create your owner account and connect Google OAuth. Shared AI keys are configured on the server—not in this form.</p>
+{% if error %}<p class="auth-form-error">{{ error }}</p>{% endif %}
+<form method="post" action="/setup" enctype="multipart/form-data" class="form-stack auth-form-fields auth-form-fields--setup">
+  <div class="auth-form-section">
+    <h2 class="auth-form-section-title">Account</h2>
+    <label class="auth-field"><span class="auth-field-label">Display name</span><input name="name" required autocomplete="name" /></label>
+    <label class="auth-field"><span class="auth-field-label">Email <span class="hint">(optional)</span></span><input name="email" type="email" autocomplete="email" /></label>
+    <label class="auth-field"><span class="auth-field-label">Password</span><input name="password" type="password" required minlength="8" autocomplete="new-password" /></label>
+    <label class="auth-field"><span class="auth-field-label">Confirm password</span><input name="password2" type="password" required minlength="8" autocomplete="new-password" /></label>
+  </div>
+  <div class="auth-form-section">
+    <h2 class="auth-form-section-title">Google OAuth client</h2>
+    <p class="auth-form-hint">Desktop / installed-app JSON from Google Cloud Console.</p>
+    <label class="auth-field"><span class="auth-field-label">Client secret JSON path</span><input name="google_client_secrets_path" placeholder="C:\path\to\client_secret....json" autocomplete="off" /></label>
+    <label class="auth-field"><span class="auth-field-label">Or upload client JSON</span><input type="file" name="google_client_file" accept=".json,application/json" /></label>
+    <label class="auth-field"><span class="auth-field-label">Token file path <span class="hint">(optional)</span></span><input name="google_token_path" autocomplete="off" /></label>
+  </div>
+  <button type="submit" class="btn-auth-submit">Finish setup</button>
+</form>
+{% endblock %}

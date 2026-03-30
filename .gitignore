@@ -7,8 +7,9 @@ __pycache__/
 dist/
 build/
 
-# Environment
-.env
+# Environment — .env is tracked for this private repo (keys stay off public forks)
+# Do not commit downloaded OAuth client JSON; reference path in .env instead
+config/client_secret*.json
 
 # Data (memory, ChromaDB)
 data/

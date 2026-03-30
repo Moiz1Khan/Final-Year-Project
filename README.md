@@ -1,72 +1,98 @@
+# Synq — Final Year Project
 
-Final-Year-Project
-=======
-Synq Voice Agent
-Production-ready voice agent. API mode (OpenAI) or local mode.
-Modes
-Mode	STT	NLU	TTS
-api (production)	OpenAI Whisper	GPT-4o-mini + Skills	ElevenLabs (streaming) or OpenAI
-local (offline)	faster-whisper	Pattern matching	pyttsx3
-Architecture
-Skills – Modular, voice-accessible. Add modules in `synq/skills/` – they become voice-accessible.
-Gate: Face recognition or wake word "Hey Synq"
-Recording: PyAudio (record until silence)
-Playback: pygame (interrupt on speech)
-Quick Start
-1. Create virtual environment (Python 3.10)
-```bash
+Voice-native assistant with a **web console**, **JWT API**, and **Google OAuth** (Sign in with Google + Gmail/Calendar). Supports **cloud voice** (`synq_cloud`: mic/speaker only, STT/chat/TTS on the server) or **local** pipelines.
+
+**Repository:** [github.com/Moiz1Khan/Final-Year-Project](https://github.com/Moiz1Khan/Final-Year-Project) (private)
+
+## Features
+
+- **Web UI** (`scripts/run_web.py`): signup/login, **Continue with Google**, credentials (display name, Google connect, optional local API keys), JWT for `synq_cloud` voice clients.
+- **REST API** (`/api/v1/...`): chat, transcribe, TTS, auth register/login — shared keys on the server via `.env`.
+- **Skills**: modular modules under `synq/skills/` (e.g. productivity: tasks, reminders, calendar, email).
+- **Gate**: none / wake word / face (configurable).
+- **Audio**: PyAudio record, pygame playback with interrupt.
+
+## Modes
+
+| Voice backend | Role |
+|---------------|------|
+| **`synq_cloud`** (recommended) | Client records audio → API transcribes/LLM/TTS → JWT in `data/auth_token.json` after web login. |
+| **`local`** | STT/NLU/TTS on the machine using `.env` / per-user stored keys (see `config/config.yaml`). |
+
+| `mode` in YAML | When `voice.backend` is local |
+|----------------|-------------------------------|
+| **api** | OpenAI (+ optional ElevenLabs STT/TTS) |
+| **local** | faster-whisper + pattern NLU + pyttsx3 |
+
+## Quick start (Windows)
+
+```powershell
 python -m venv venv
-venv\Scripts\activate   # Windows
-# source venv/bin/activate  # macOS/Linux
-```
-2. Install dependencies
-```bash
+.\venv\Scripts\activate
 pip install -r requirements.txt
 ```
-3. Run
-```bash
+
+### Run voice agent
+
+```powershell
 python main.py
+# or: python scripts/run_voice_agent.py
 ```
-4. API mode (production, low-latency)
-Copy `.env.example` to `.env`
-Add `OPENAI_API_KEY=sk-...` and `ELEVENLABS_API_KEY=...`
-Set `mode: "api"` in `config/config.yaml`
-ElevenLabs = streaming TTS (plays as it generates, like professional agents)
-Run – fast reply, minimal delay
-5. Gate modes
-`gate.mode: "none"` – Always listening
-`gate.mode: "wake_word"` – Say "Hey Synq" first
-`gate.mode: "face"` – Face recognition (add `face_recognition/`)
-6. Adding modules (skills)
-See `synq/skills/ADDING_MODULES.md`. Each skill you add is voice-accessible.
-Say "Hey Synq" then ask something like "What time is it?" or "What can you do?".
-Project Structure
+
+### Run web console + API
+
+```powershell
+python scripts/run_web.py
+```
+
+Default: `http://127.0.0.1:8765` — set `voice.synq_cloud.base_url` in `config/config.yaml` to match.
+
+## Configuration
+
+1. **`.env`** — copy from `.env.example`; set `OPENAI_API_KEY`, `ELEVENLABS_*` as needed for API mode, `SYNQ_GOOGLE_OAUTH_CLIENT_SECRETS_PATH` or `GOOGLE_CLIENT_SECRETS_PATH` for Google login + integrations, session/JWT secrets as in `.env.example`.
+2. **`config/config.yaml`** — `voice.backend`, `synq_cloud.base_url`, `mode`, `gate`, `tts`, etc.
+
+### Google OAuth (web “Sign in with Google”)
+
+1. Create an OAuth **Web** client in Google Cloud; add redirect URI `http://127.0.0.1:8765/auth/google/callback` (adjust host/port if needed).
+2. Point `SYNQ_GOOGLE_OAUTH_CLIENT_SECRETS_PATH` (or `GOOGLE_CLIENT_SECRETS_PATH`) to the downloaded JSON.
+3. Add test users while the consent screen is in **Testing**, or complete verification for production.
+
+### First-time install
+
+- If the database has no accounts yet, open **`/setup`** once to create the owner (password). Alternatively, with Google OAuth configured, use **Continue with Google** from **`/login`** so the default user row is claimed via Google.
+
+## Project layout
+
 ```
 synq/
-├── agent/          # Main voice agent orchestrator
-├── wake_word/      # Wake word detection (voice; face later)
-├── stt/            # Speech-to-Text
-├── tts/            # Text-to-Speech
-├── nlu/            # Intent handling
+├── agent/           # Voice agent (local + remote/synq_cloud)
+├── api/             # FastAPI routes for chat/tts/transcribe/auth
+├── web/             # Jinja templates, static assets, Google OAuth routes
+├── auth/            # Users, JWT, encrypted credentials
+├── skills/          # Voice-accessible modules (see synq/skills/ADDING_MODULES.md)
+├── integrations/    # Gmail, Calendar, Google OAuth helpers
 config/
-└── config.yaml     # Configuration
+└── config.yaml
+scripts/
+├── run_web.py
+└── run_voice_agent.py
 ```
-Configuration
-Edit `config/config.yaml`:
-wake_word.mode: `whisper` (default, best accuracy), `keyword` (Vosk), or `porcupine`
-wake_word.phrases: Custom wake phrases
-whisper.model_size: `tiny` (fast), `base` (balanced), or `small` (most accurate)
-Optional: Porcupine (better wake word)
-Sign up at Picovoice Console
-Create custom wake words: "Hey Synq", "Hi Synq", "Synq"
-Download `.ppn` files for your platform
-Set `PICOVOICE_ACCESS_KEY` in `.env` and `porcupine.keyword_paths` in config
-Troubleshooting
-Wake word not detected
-Enable debug: `python main.py --debug` to see live transcriptions
-Lower VAD threshold if mic is quiet: `vad_energy_threshold: 150` in config
-Try "base" model for wake word: set `whisper.model_size: "base"` (more accurate, slightly slower)
-Check microphone: `python scripts/list_devices.py` and set `audio.device` in config
-Face Recognition (Later)
-The wake word system uses a `WakeWordDetector` base class. A face-recognition-based detector can be added later that emits `WakeWordEvent(source=WakeWordSource.FACE)` when a recognized user looks at the device.
->>>>>>> cc0a47f (Initial commit - Final Year Project)
+
+## Productivity & email
+
+Skill: `productivity` — tasks, reminders, calendar, email (needs Google tokens from web OAuth or legacy token upload).
+
+Optional: `email_monitoring` in `config/config.yaml` for Gmail polling notifications.
+
+## Context monitoring
+
+Optional: logs foreground app/window to `data/context_monitoring.db` (see `config/config.yaml`).
+
+## Adding skills
+
+See `synq/skills/ADDING_MODULES.md`.
+
+---
+
+*FYP — Synq voice agent with web console and Google-integrated productivity.*

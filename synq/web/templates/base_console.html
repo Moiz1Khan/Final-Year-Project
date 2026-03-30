@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block outer %}
+<div class="console console-skin">
+  <div class="console-bg" aria-hidden="true">
+    <div class="console-mesh"></div>
+    <div class="console-gridlines"></div>
+    <div class="console-orb console-orb--a"></div>
+    <div class="console-orb console-orb--b"></div>
+  </div>
+  <div class="console-layout">
+    <aside class="sidebar" data-tilt-wrap>
+      <div class="sidebar-inner">
+        <a href="/app" class="sidebar-logo">
+          <span class="sidebar-logo-icon" aria-hidden="true"></span>
+          <span>Synq</span>
+        </a>
+        <p class="sidebar-tagline">Voice console</p>
+        <nav class="sidebar-nav">
+          <a href="/app" class="side-link {% if request.url.path == '/app' or request.url.path == '/app/' %}is-active{% endif %}">
+            <span class="side-ico" data-i="⌂"></span> Overview
+          </a>
+          <a href="/app/credentials" class="side-link {% if '/credentials' in request.url.path %}is-active{% endif %}">
+            <span class="side-ico" data-i="◈"></span> Credentials
+          </a>
+          <a href="/docs" class="side-link" target="_blank" rel="noopener">
+            <span class="side-ico" data-i="⟩"></span> API docs
+          </a>
+        </nav>
+        <div class="sidebar-foot">
+          <form action="/logout" method="get">
+            <button type="submit" class="btn-ghost full">Log out</button>
+          </form>
+        </div>
+      </div>
+    </aside>
+    <div class="console-main">
+      <header class="topbar">
+        <div class="topbar-title">{% block page_title %}Dashboard{% endblock %}</div>
+        <div class="topbar-meta">{% block topbar_meta %}{% endblock %}</div>
+      </header>
+      <div class="console-scroll">
+        <main class="console-content">
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

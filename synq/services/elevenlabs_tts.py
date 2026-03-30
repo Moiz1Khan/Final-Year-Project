@@ -40,6 +40,10 @@ class ElevenLabsTTS:
         self.interrupt_threshold = interrupt_threshold
         self.interrupt_chunks = interrupt_chunks
         self._playing = False
+        self.last_metrics = {
+            "first_byte_ms": 0,
+            "playback_ms": 0,
+        }
 
     def speak(
         self,
@@ -61,6 +65,10 @@ class ElevenLabsTTS:
         client = BaseElevenLabs(api_key=self.api_key)
         self._playing = True
         interrupted = [False]
+        first_byte_seen = [False]
+        t_play_start = time.perf_counter()
+        t_playback_start = [None]
+        self.last_metrics = {"first_byte_ms": 0, "playback_ms": 0}
 
         def stream_and_play():
             try:
@@ -81,6 +89,10 @@ class ElevenLabsTTS:
                         if not self._playing or interrupted[0]:
                             break
                         if chunk:
+                            if not first_byte_seen[0]:
+                                first_byte_seen[0] = True
+                                self.last_metrics["first_byte_ms"] = int((time.perf_counter() - t_play_start) * 1000)
+                                t_playback_start[0] = time.perf_counter()
                             arr = np.frombuffer(chunk, dtype=np.int16)
                             out.write(arr)
             except Exception as e:
@@ -118,6 +130,8 @@ class ElevenLabsTTS:
 
         play_thread.join(timeout=30)
         self._playing = False
+        if t_playback_start[0] is not None:
+            self.last_metrics["playback_ms"] = int((time.perf_counter() - t_playback_start[0]) * 1000)
         return not interrupted[0]
 
     def stop(self) -> None:

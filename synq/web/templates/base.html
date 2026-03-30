@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0a0b0f" />
+  <title>{% block title %}Synq{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body class="synq-ui">
+{% block outer %}
+  <div class="auth-shell">
+    <div class="auth-ambient" aria-hidden="true"></div>
+    <header class="auth-top">
+      <a href="/" class="brand-mark">Synq</a>
+      <nav class="auth-nav">{% block nav %}{% endblock %}</nav>
+    </header>
+    <main class="auth-main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+{% endblock %}
+<script src="/static/app.js" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

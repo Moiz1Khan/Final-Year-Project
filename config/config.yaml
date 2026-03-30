@@ -5,7 +5,19 @@ agent:
   name: "Synq"
   language: "en"
 
-# Mode: "api" = OpenAI Whisper + GPT + TTS | "local" = faster-whisper + patterns + pyttsx3
+# Voice client backend:
+# - "local" = STT/NLU/TTS on this machine (uses .env / per-user stored keys)
+# - "synq_cloud" = mic + speaker only; STT/chat/TTS via JWT API (shared keys on server)
+voice:
+  backend: "synq_cloud"
+
+synq_cloud:
+  base_url: "http://127.0.0.1:8765"
+
+# Mode (used when voice.backend is local):
+# - "api" = OpenAI Whisper + GPT + TTS
+# - "local" = faster-whisper + patterns + pyttsx3
+# - "realtime" = streaming voice pipeline (low-latency) while keeping existing logic/modules
 mode: "api"
 
 # Memory: full history + semantic recall per user (API mode only)
@@ -18,14 +30,16 @@ gate:
 
 # TTS: "openai" (free with OpenAI key) | "elevenlabs" (low-latency, paid - switch when ready)
 tts:
-  engine: "openai"
+  engine: "elevenlabs"
   elevenlabs:
-    voice_id: "21m00Tcm4TlvDq8ikWAM"  # Rachel
+    voice_id: "hpp4J3VqNfWAUOO0d1Us"  # Rachel
     model_id: "eleven_flash_v2_5"
+    stt_model_id: "scribe_v2"
     optimize_streaming_latency: 4  # 0-4, 4 = min delay
 
 # API services (when mode: api)
 api:
+  stt_provider: "elevenlabs"  # elevenlabs | openai
   openai:
     stt_model: "whisper-1"
     nlu_model: "gpt-4o-mini"
@@ -46,10 +60,23 @@ wake_word:
 audio:
   sample_rate: 16000
   silence_threshold: 1000
-  silence_duration: 0.9
+  silence_duration: 0.45
   interrupt_threshold: 50000
   interrupt_chunks: 3
   device: null
+
+# Realtime voice architecture tuning (used when mode: "realtime")
+realtime:
+  model: "gpt-4o-realtime-preview"
+  # Voice used by realtime responses where supported
+  voice: "alloy"
+  # Shorter endpointing = lower delay, but can cut off trailing words if too low
+  endpoint_silence_ms: 350
+  min_utterance_ms: 250
+  vad_threshold: 900
+  chunk_ms: 40
+  # Keep tool/skill execution safe: trigger only on final utterance
+  execute_on_final_only: true
 
 debug: false
 
@@ -62,3 +89,10 @@ context_monitoring:
   sensitive_data:
     truncate_window_title: 80   # 0 = no truncation; truncate for privacy
     exclude_apps: []            # e.g. ["lastpass.exe", "1password.exe"]
+
+# Email monitoring (Gmail) - background polling notifications
+email_monitoring:
+  enabled: true
+  poll_seconds: 30
+  log_notifications: false    # Keep terminal quiet while listening
+  speak_notifications: false  # Keep silent; assistant responds only when asked

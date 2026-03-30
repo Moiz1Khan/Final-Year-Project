@@ -5,6 +5,7 @@ Local mode: IntentHandler (pattern-based)
 """
 
 from typing import Optional
+import threading
 
 from synq.stt.base import TranscriptResult
 
@@ -28,12 +29,33 @@ class Orchestrator:
         self._registry = None
         self._memory = None
 
+    def _persist_turn_async(self, user_id: int, text: str, response: str) -> None:
+        """
+        Persist conversation/memory in background to reduce turn latency.
+        This keeps user-visible behavior the same while moving non-critical work off the hot path.
+        """
+        if not self._memory:
+            return
+
+        def _worker() -> None:
+            try:
+                self._memory.save_turn(user_id, "user", text)
+                self._memory.save_turn(user_id, "assistant", response)
+                from synq.memory.extractor import extract_memories
+                for mem_type, mem_content in extract_memories(text, response, self.api_key):
+                    self._memory.add_memory(user_id, mem_type, mem_content)
+            except Exception:
+                # Background persistence should not impact voice turn.
+                pass
+
+        threading.Thread(target=_worker, daemon=True).start()
+
     def _ensure_loaded(self):
         if self.use_api and self.api_key:
             if self._nlu is None:
                 from synq.services.openai_nlu import OpenAINLU
                 from synq.skills.registry import get_registry
-                from synq.skills import time_skill, general_skill, activity_skill
+                from synq.skills import time_skill, general_skill, activity_skill, productivity_skill
                 self._registry = get_registry()
                 self._nlu = OpenAINLU(api_key=self.api_key, agent_name=self.agent_name)
                 self._nlu.register_modules(self._registry.list_for_nlu())
@@ -74,11 +96,7 @@ class Orchestrator:
                     response = skill_result.response
 
             if self._memory:
-                self._memory.save_turn(user_id, "user", text)
-                self._memory.save_turn(user_id, "assistant", response)
-                from synq.memory.extractor import extract_memories
-                for mem_type, mem_content in extract_memories(text, response, self.api_key):
-                    self._memory.add_memory(user_id, mem_type, mem_content)
+                self._persist_turn_async(user_id, text, response)
 
             return response
 

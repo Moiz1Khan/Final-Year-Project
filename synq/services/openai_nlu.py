@@ -84,6 +84,17 @@ IMPORTANT: For activity/screen/context questions, ALWAYS set "module": "activity
 - "what was I doing", "what have I been working on", "summarize my activity", "what apps was I using"
 These MUST route to the activity module - do not respond yourself, set module: "activity" so the system can fetch real data.
 
+IMPORTANT: For productivity questions, ALWAYS set "module": "productivity":
+- tasks: "add a task", "create a task", "what tasks are pending", "complete task 3", "find the task about X"
+- reminders: "remind me tomorrow", "set a reminder", "my reminders"
+- calendar/meetings: ALWAYS use module "productivity" and intent "schedule_meeting" for: "schedule a meeting", "schedule meeting", "book a call", "create a meeting", "add calendar event", "meeting link", "generate meeting link", "meeting in X minutes", "meeting in five minutes"
+- email: "send an email to", "email Sarah", "read my unread emails", "check my email"
+
+Never guess missing critical fields:
+- meeting scheduling requires participants + date + time (duration optional)
+- sending email requires recipient + content (subject can be generated if missing)
+If information is missing, set module to "productivity" and ask ONE short clarifying question in the JSON response.
+
 If unclear, ask for clarification. Be brief - this is voice, not text."""
 
         try:
