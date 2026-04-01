@@ -34,6 +34,8 @@ class PyAudioRecorder:
         silence_threshold: float = 1000,
         silence_duration: float = 1.5,
         device_index: Optional[int] = None,
+        max_wait_speech_seconds: float = 25.0,
+        max_record_seconds: float = 120.0,
     ):
         self.sample_rate = sample_rate
         self.channels = channels
@@ -41,6 +43,8 @@ class PyAudioRecorder:
         self.silence_threshold = silence_threshold
         self.silence_duration = silence_duration
         self.device_index = device_index
+        self.max_wait_speech_seconds = max(5.0, float(max_wait_speech_seconds))
+        self.max_record_seconds = max(10.0, float(max_record_seconds))
         self._audio: Optional[pyaudio.PyAudio] = None
 
     def record_to_file(
@@ -69,6 +73,10 @@ class PyAudioRecorder:
         silent_chunks = 0
         chunks_for_silence = int(self.silence_duration * self.sample_rate / self.chunk)
         has_started = False
+        chunks_no_speech = 0
+        max_wait_chunks = int(self.max_wait_speech_seconds * self.sample_rate / self.chunk)
+        max_total_chunks = int(self.max_record_seconds * self.sample_rate / self.chunk)
+        total_chunks = 0
 
         try:
             if prompt:
@@ -79,16 +87,30 @@ class PyAudioRecorder:
                 except OSError:
                     continue
                 rms = get_rms(data)
+                total_chunks += 1
 
                 if rms > self.silence_threshold:
                     has_started = True
                     silent_chunks = 0
+                    chunks_no_speech = 0
                     frames.append(data)
                 elif has_started:
                     frames.append(data)
                     silent_chunks += 1
                     if silent_chunks >= chunks_for_silence:
                         break
+                else:
+                    chunks_no_speech += 1
+                    if chunks_no_speech >= max_wait_chunks:
+                        print(
+                            "[WARN] No speech detected before timeout. "
+                            "Check the default mic, try audio.device in config, "
+                            "or lower audio.silence_threshold if the level is too quiet."
+                        )
+                        break
+                if has_started and total_chunks >= max_total_chunks:
+                    print("[WARN] Max recording length reached; stopping.")
+                    break
         except KeyboardInterrupt:
             pass
         finally:

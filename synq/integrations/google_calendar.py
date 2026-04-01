@@ -62,3 +62,29 @@ def create_meeting_event(
     )
     return event
 
+
+def list_events_in_range(
+    *,
+    time_min_rfc3339: str,
+    time_max_rfc3339: str,
+    max_results: int = 50,
+) -> List[Dict[str, Any]]:
+    """List primary calendar events between two RFC3339 instants (single events expanded)."""
+    from googleapiclient.discovery import build
+
+    creds = get_credentials(CALENDAR_SCOPES)
+    service = build("calendar", "v3", credentials=creds)
+    events_result = (
+        service.events()
+        .list(
+            calendarId="primary",
+            timeMin=time_min_rfc3339,
+            timeMax=time_max_rfc3339,
+            maxResults=max_results,
+            singleEvents=True,
+            orderBy="startTime",
+        )
+        .execute()
+    )
+    return list(events_result.get("items") or [])
+

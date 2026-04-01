@@ -1,103 +1,191 @@
-{% extends "base_console.html" %}
-{% block title %}Overview — Synq{% endblock %}
-{% block page_title %}Overview{% endblock %}
-{% block topbar_meta %}
-<span class="status-pill {% if voice_synced %}ok{% else %}muted{% endif %}">
-  <span class="status-dot"></span>
-  {% if voice_synced %}Voice session linked{% else %}Set voice user{% endif %}
-</span>
-{% endblock %}
-{% block content %}
-<nav class="mobile-nav">
-  <a href="/app">Overview</a>
-  <a href="/app/credentials">Credentials</a>
-  <a href="/docs" target="_blank" rel="noopener">API</a>
-</nav>
+{% extends "base_dashboard_aura.html" %}
+{% block title %}Overview | Synq{% endblock %}
+{% block dash_content %}
+{% if request.query_params.get('voice') %}
+<p class="dash-banner dash-banner--ok">This account is set as the active voice user. <span class="code-inline">data/auth_token.json</span> was refreshed on sign-in.</p>
+{% endif %}
+{% if insights is not defined %}
+<p class="dash-banner">The server is still running an older process without the new dashboard data. Press <strong>Ctrl+C</strong> in the terminal where the web app runs, then start it again with <span class="code-inline">python scripts/run_web.py</span> (reload is now enabled for future edits).</p>
+{% else %}
+{% if insights.google_error %}
+<p class="dash-banner">Google: {{ insights.google_error }}</p>
+{% endif %}
 
-<div class="bento">
-  <div class="bento-cell bento-hero span-8" data-tilt data-reveal>
-    <div class="bento-hero-grid">
-      <div class="bento-hero-copy">
-        <p class="bento-label">Workspace</p>
-        <h1>Hello, {{ user.name }}</h1>
-        <p class="sub">Manage Google OAuth, voice session, and API access from this console. Production voice runs through your Synq API with per-user isolation.</p>
-        <div class="dash-pill-row">
-          {% if request.query_params.get('voice') %}
-          <span class="status-pill ok"><span class="status-dot"></span> Voice user updated</span>
+<div class="dash-bento">
+  <article class="dash-card dash-card--glow dash-span-4">
+    <p class="dash-eyebrow">Voice</p>
+    <h2>One command away</h2>
+    <p class="lead">Speak to run skills: calendar, mail, tasks, and desktop actions within your trusted lists.</p>
+  </article>
+  <article class="dash-card dash-card--glow dash-span-4">
+    <p class="dash-eyebrow">Google</p>
+    <h2>Mail &amp; meetings</h2>
+    <p class="lead">When connected, Synq summarizes unread mail and lists calendar events in your overview.</p>
+  </article>
+  <article class="dash-card dash-card--glow dash-span-4">
+    <p class="dash-eyebrow">Desktop</p>
+    <h2>On-device control</h2>
+    <p class="lead">Open apps and sites, search the web, and run routines via allowlisted desktop actions.</p>
+  </article>
+
+  <article class="dash-card dash-span-12">
+    <p class="dash-eyebrow">Shortcuts</p>
+    <h2>Quick actions</h2>
+    <p class="lead" style="margin-bottom: 0.85rem;">Jump to feature details or your account.</p>
+    <div class="dash-quick">
+      <a class="dash-quick-item" href="/app/features#calendar"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Calendar</a>
+      <a class="dash-quick-item" href="/app/features#mail"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg></span>Mail</a>
+      <a class="dash-quick-item" href="/app/features#tasks"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Tasks</a>
+      <a class="dash-quick-item" href="/app/features#desktop"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>Desktop</a>
+      <a class="dash-quick-item" href="/app/features#voice"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></span>Voice</a>
+      <a class="dash-quick-item" href="/app/features#memory"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Memory</a>
+    </div>
+  </article>
+
+  <article class="dash-card dash-span-12">
+    <p class="dash-eyebrow">Synq at a glance</p>
+    <h2>Your metrics</h2>
+    <p class="lead" style="margin-bottom: 1rem;">Pulled from your account, voice history, tasks, and Google when connected.</p>
+    <div class="dash-mini-row">
+      <div class="dash-mini">
+        <div class="dash-mini-label">Voice turns (7d)</div>
+        <div class="dash-mini-value">{{ insights.voice_turns_7d }}</div>
+        <div class="dash-mini-delta dash-mini-delta--up">{{ voice_delta }} vs prior week</div>
+        <div class="dash-spark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="dash-mini">
+        <div class="dash-mini-label">Calendar window</div>
+        <div class="dash-mini-value">{% if insights.meetings_window is not none %}{{ insights.meetings_window }}{% else %}—{% endif %}</div>
+        <div class="dash-mini-delta dash-mini-delta--up">Events ±7d → +3w</div>
+        <div class="dash-spark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="dash-mini">
+        <div class="dash-mini-label">Unread mail</div>
+        <div class="dash-mini-value">{% if insights.inbox_unread is not none %}{{ insights.inbox_unread }}{% else %}—{% endif %}</div>
+        <div class="dash-mini-delta {% if insights.inbox_unread and insights.inbox_unread > 10 %}dash-mini-delta--down{% else %}dash-mini-delta--up{% endif %}">Inbox</div>
+        <div class="dash-spark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="dash-mini">
+        <div class="dash-mini-label">Open tasks</div>
+        <div class="dash-mini-value">{{ insights.open_tasks }}</div>
+        <div class="dash-mini-delta dash-mini-delta--up">Due this week: {{ insights.tasks_due_week }}</div>
+        <div class="dash-spark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </article>
+
+  <article class="dash-card dash-span-8">
+    <p class="dash-eyebrow">Summary</p>
+    <h2>What you&rsquo;ve done with Synq</h2>
+    <div class="dash-split-big">
+      <div>
+        <p class="dash-stat-hero">{{ insights.summary_headline }}</p>
+        <p class="dash-stat-sub">{{ insights.summary_detail }}</p>
+        <div class="dash-actions-row">
+          <a class="dash-btn-primary" href="/app/activity">View activity</a>
+          <a class="dash-btn-outline" href="/app/features">How it works</a>
+        </div>
+      </div>
+      <div class="dash-donut-wrap">
+        <div class="dash-donut dash-donut--dynamic" style="background: {{ insights.donut_css | safe }};">
+          <div class="dash-donut-hole"><span>Mix</span><strong>100%</strong></div>
+        </div>
+        <ul class="dash-legend">
+          <li><i style="background:#008b8b;"></i> Calendar ({{ insights.donut_pct_calendar }}%)</li>
+          <li><i style="background:#2dd4bf;"></i> Email ({{ insights.donut_pct_email }}%)</li>
+          <li><i style="background:#67e8f9;"></i> Voice ({{ insights.donut_pct_voice }}%)</li>
+          <li><i style="background:#cbd5e1;"></i> Tasks &amp; other ({{ insights.donut_pct_other }}%)</li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <article class="dash-card dash-span-4">
+    <p class="dash-eyebrow">Momentum</p>
+    <h2>Weekly voice use</h2>
+    <p class="dash-levels-title">Progress toward a soft target (20 messages / week)</p>
+    <div class="dash-progress-track"><div class="dash-progress-fill" style="width: {{ insights.momentum_pct }}%;"></div></div>
+    <div class="dash-steps">
+      <span class="is-on">Start</span>
+      <span class="{% if insights.momentum_pct >= 40 %}is-on{% endif %}">Steady</span>
+      <span class="{% if insights.momentum_pct >= 75 %}is-on{% endif %}">Strong</span>
+    </div>
+    <p class="lead" style="margin-top: 1.1rem;"><a href="/app/credentials">Account</a> to connect Google or local API keys.</p>
+  </article>
+
+  <article class="dash-card dash-span-12">
+    <p class="dash-eyebrow">Recent</p>
+    <h2>Meetings &amp; mail</h2>
+    <p class="lead" style="margin-bottom: 1rem;">From Google Calendar and Gmail when your account is connected.</p>
+    <div class="dash-tabs" role="tablist">
+      <button type="button" class="dash-tab is-active" data-dash-tab="all" role="tab" aria-selected="true">All</button>
+      <button type="button" class="dash-tab" data-dash-tab="meet" role="tab">Meetings</button>
+      <button type="button" class="dash-tab" data-dash-tab="mail" role="tab">Mail</button>
+    </div>
+    <div class="dash-table-wrap">
+      <table class="dash-table" id="dash-overview-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Title / subject</th>
+            <th>When</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if insights.table_rows %}
+          {% for row in insights.table_rows %}
+          <tr data-row-kind="{{ row.kind }}">
+            <td>
+              {% if row.kind == 'meet' %}
+              <span class="dash-pill dash-pill--meet">Meet</span>
+              {% else %}
+              <span class="dash-pill dash-pill--mail">Mail</span>
+              {% endif %}
+            </td>
+            <td>{{ row.title }}{% if row.extra %}<br /><span class="dash-table-sub">{{ row.extra }}</span>{% endif %}</td>
+            <td>{{ row.when }}</td>
+            <td>
+              {% if row.pill == 'done' %}
+              <span class="dash-pill dash-pill--done">Done</span>
+              {% else %}
+              <span class="dash-pill dash-pill--ok">{{ row.status }}</span>
+              {% endif %}
+            </td>
+            <td><div class="dash-micro" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div></td>
+          </tr>
+          {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="5" class="dash-table-empty">No rows yet. Connect Google under Account, or use voice to create history.</td>
+          </tr>
           {% endif %}
-        </div>
-      </div>
-      <div class="dash-hero-chart" aria-hidden="true">
-        <svg class="dash-spark" viewBox="0 0 280 72" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="dash-spark-fill" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="rgba(168, 85, 247, 0.35)" />
-              <stop offset="100%" stop-color="rgba(168, 85, 247, 0)" />
-            </linearGradient>
-          </defs>
-          <path d="M0,52 L35,44 L70,48 L105,36 L140,40 L175,28 L210,34 L245,22 L280,30 L280,72 L0,72 Z" fill="url(#dash-spark-fill)" />
-          <path d="M0,52 L35,44 L70,48 L105,36 L140,40 L175,28 L210,34 L245,22 L280,30" fill="none" stroke="rgba(196, 181, 253, 0.9)" stroke-width="1.75" vector-effect="non-scaling-stroke" />
-        </svg>
-        <div class="dash-mini-bars">
-          <span style="--h: 45%"></span><span style="--h: 72%"></span><span style="--h: 58%"></span>
-          <span style="--h: 84%"></span><span style="--h: 62%"></span><span style="--h: 76%"></span>
-          <span style="--h: 50%"></span>
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div>
-  </div>
-
-  <div class="bento-cell bento-stat span-4" data-tilt data-reveal>
-    <p class="bento-label">Identity</p>
-    <div class="stat-value">{{ user.id }}</div>
-    <div class="stat-label">Your user ID</div>
-    <p class="bento-footnote">{{ user_count }} account(s) in this database</p>
-  </div>
-
-  <div class="bento-cell span-5 row-2 bento-stack" data-tilt data-reveal>
-    <p class="bento-label">Voice agent</p>
-    <h2>Session &amp; JWT</h2>
-    <p>Logging in writes <span class="code-inline">data/auth_token.json</span> for <strong>synq_cloud</strong> mode. Use this device as the active voice user after switching accounts.</p>
-    <form method="post" action="/app/active-voice-user" class="dash-voice-form">
-      <button type="submit" class="btn-primary btn-primary--block">Use this account for voice</button>
-    </form>
-    <p class="hint dash-cli-hint">CLI: <span class="code-inline">SYNQ_ACTIVE_USER_ID={{ user.id }}</span></p>
-  </div>
-
-  <div class="bento-cell span-4" data-tilt data-reveal>
-    <p class="bento-label">Auth file</p>
-    <h2>JWT on disk</h2>
-    {% if has_jwt %}
-    <span class="status-pill ok"><span class="status-dot"></span> auth_token.json present</span>
-    {% else %}
-    <span class="status-pill warn">Missing — sign in again</span>
-    {% endif %}
-    <p class="bento-gap-top">Required for remote voice client to call your API as you.</p>
-  </div>
-
-  <div class="bento-cell span-3" data-tilt data-reveal>
-    <p class="bento-label">Google</p>
-    <h2>Integration</h2>
-    {% if google_configured %}
-    <span class="status-pill ok">Client / token configured</span>
-    {% else %}
-    <span class="status-pill muted">Incomplete</span>
-    <p class="bento-gap-top">Add OAuth client under Credentials.</p>
-    {% endif %}
-  </div>
-
-  <div class="bento-cell span-6" data-tilt data-reveal>
-    <p class="bento-label">Shortcuts</p>
-    <div class="quick-links">
-      <a href="/app/credentials">Credentials <span>→</span></a>
-      <a href="/docs" target="_blank" rel="noopener">OpenAPI / Try requests <span>↗</span></a>
-    </div>
-  </div>
-
-  <div class="bento-cell span-6" data-tilt data-reveal>
-    <p class="bento-label">Reference</p>
-    <h2>Product flow</h2>
-    <p class="dash-flow-copy">Each person uses <span class="code-inline">/signup</span> (or the link on the login page) to create their own account → connect Google → optional token JSON for server-side Gmail/Calendar → set voice user → run <span class="code-inline">scripts/run_voice_agent.py</span> with <span class="code-inline">voice.backend: synq_cloud</span> in config.</p>
-  </div>
+  </article>
 </div>
+<script>
+(function () {
+  var tabs = document.querySelectorAll("[data-dash-tab]");
+  var rows = document.querySelectorAll("#dash-overview-table tbody tr[data-row-kind]");
+  if (!tabs.length || !rows.length) return;
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      var filter = tab.getAttribute("data-dash-tab");
+      tabs.forEach(function (t) {
+        t.classList.toggle("is-active", t === tab);
+        t.setAttribute("aria-selected", t === tab ? "true" : "false");
+      });
+      rows.forEach(function (tr) {
+        var k = tr.getAttribute("data-row-kind");
+        var show = filter === "all" || k === filter;
+        tr.style.display = show ? "" : "none";
+      });
+    });
+  });
+})();
+</script>
+{% endif %}
 {% endblock %}

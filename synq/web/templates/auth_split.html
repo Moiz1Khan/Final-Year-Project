@@ -1,65 +1,140 @@
 {% extends "base.html" %}
+{% block theme_color %}#e8f6f8{% endblock %}
+{% block body_class %}auth-page-aura{% endblock %}
+{% block head_extra %}
+<style id="auth-aura-critical">
+  html { background: #f0fdff; }
+  body.auth-page-aura.synq-ui { background: linear-gradient(105deg, #f0fdff 0%, #fff 45%, #f5fbfc 100%) !important; color: #1a1a1a !important; }
+  .auth-aura.auth-aura--shell { min-height: 100vh; width: 100%; margin: 0; background: linear-gradient(105deg, #f0fdff 0%, #fff 38%, #fafefe 55%, #f5fbfc 72%, #fff 100%) !important; color: #1a1a1a !important; font-family: "DM Sans", system-ui, sans-serif; }
+  .auth-aura-layout { display: grid; grid-template-columns: minmax(280px, 1.08fr) minmax(300px, 0.92fr); min-height: 100vh; width: 100%; }
+  @media (max-width: 900px) { .auth-aura-layout { grid-template-columns: 1fr; } }
+  .auth-aura-panel { background: linear-gradient(180deg, #fcffff 0%, #fff 42%, #f7fcfd 100%); min-height: 100vh; display: flex; flex-direction: column; }
+  .auth-aura-panel-top { display: flex; justify-content: flex-end; padding: 1.1rem 1.5rem 0; }
+  .auth-aura-nav-link { padding: 0.45rem 1rem; border-radius: 10px; font-size: 0.875rem; font-weight: 600; text-decoration: none; border: 1px solid #e5e5e5; color: #333; background: #fff; }
+  .auth-aura-nav-link--cta { background: #111 !important; color: #fff !important; border-color: #111 !important; }
+  .auth-aura-nav-muted { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #999; }
+  .auth-aura-panel-body { flex: 1; width: 100%; max-width: 26rem; margin: 0 auto; padding: 0.75rem 1.5rem 2.5rem; display: flex; flex-direction: column; justify-content: center; }
+  .auth-aura-title { margin: 0 0 0.45rem; font-family: Georgia, "Times New Roman", serif; font-weight: 600; font-size: clamp(1.75rem, 4vw, 2.25rem); color: #111 !important; }
+  .auth-aura-subtitle { margin: 0 0 1.25rem; font-size: 0.95rem; color: #666 !important; line-height: 1.5; }
+  .auth-aura-error { margin: 0 0 1rem; padding: 0.65rem 0.85rem; border-radius: 10px; font-size: 0.875rem; color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; }
+  .auth-aura-form { display: flex; flex-direction: column; gap: 0.9rem; }
+  .auth-aura-check { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.85rem; color: #444; cursor: pointer; }
+  .auth-aura-field { display: flex; flex-direction: column; gap: 0.35rem; }
+  .auth-aura-label { font-size: 0.78rem; font-weight: 600; color: #333 !important; }
+  .auth-aura-optional { font-weight: 500; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: #999; }
+  .auth-aura-field input:not([type="file"]) { width: 100%; padding: 0.72rem 0.95rem; border-radius: 10px; border: 1px solid #ddd; background: #fff; color: #111; font-size: 0.95rem; }
+  .auth-password-wrap { position: relative; display: flex; align-items: center; }
+  .auth-password-wrap input { padding-right: 2.6rem !important; }
+  .auth-password-toggle { position: absolute; right: 0.25rem; top: 50%; transform: translateY(-50%); border: none; background: transparent; color: #666; cursor: pointer; padding: 0.35rem; border-radius: 8px; }
+  .auth-aura-terms { margin: 0; font-size: 0.76rem; line-height: 1.45; color: #666 !important; }
+  .auth-aura-terms a { color: #008b8b; font-weight: 600; text-decoration: none; }
+  .auth-aura-submit { margin-top: 0.35rem; width: 100%; padding: 0.88rem 1rem; border: none; border-radius: 10px; background: #111 !important; color: #fff !important; font-weight: 600; font-size: 0.98rem; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+  .auth-aura-divider { display: flex; align-items: center; gap: 1rem; margin: 1.2rem 0 0.85rem; color: #999; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+  .auth-aura-divider::before, .auth-aura-divider::after { content: ""; flex: 1; height: 1px; background: #e5e5e5; }
+  .auth-aura-oauth { display: flex; flex-direction: column; gap: 0.55rem; }
+  .btn-auth-oauth { display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem; width: 100%; padding: 0.75rem 1rem; border-radius: 10px; font-weight: 600; font-size: 0.88rem; text-decoration: none; color: #333 !important; background: #fff; border: 1px solid #ddd; cursor: pointer; }
+  .btn-auth-oauth--microsoft:disabled { opacity: 0.55; cursor: not-allowed; }
+  .auth-aura-foot { margin: 1.4rem 0 0; text-align: center; font-size: 0.88rem; color: #666 !important; }
+  .auth-aura-foot a { color: #111 !important; font-weight: 700; text-decoration: none; }
+  .auth-aura-section-title { margin: 0 0 0.75rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #008b8b; }
+  .auth-aura-hint { margin: -0.2rem 0 0.75rem; font-size: 0.78rem; color: #666; line-height: 1.4; }
+  .auth-aura-code { font-family: ui-monospace, monospace; font-size: 0.75em; }
+  .auth-aura-form-section { padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #eee; }
+  .auth-aura-form--setup { max-height: min(58vh, 520px); overflow-y: auto; padding-right: 0.25rem; }
+</style>
+{% endblock %}
 {% block outer %}
-<div class="auth-split-wrap">
-  <div class="auth-split-bg" aria-hidden="true">
-    <div class="auth-split-mesh"></div>
-    <div class="auth-split-gridlines"></div>
-    <div class="auth-split-orb auth-split-orb--a"></div>
-    <div class="auth-split-orb auth-split-orb--b"></div>
-  </div>
-  <header class="auth-split-header">
-    <a href="/" class="auth-split-brand">Synq</a>
-    <nav class="auth-split-nav">{% block nav %}{% endblock %}</nav>
-  </header>
-  <div class="auth-split-body">
-    <aside class="auth-split-visual">
-      {% block auth_visual %}
-      <div class="auth-visual-stack">
-        <p class="auth-visual-eyebrow">Voice-native console</p>
-        <h2 class="auth-visual-title">Operate your day from one intelligent surface.</h2>
-        <p class="auth-visual-copy">Calendar, mail, and agents—aligned to how you work. Built for focus, not noise.</p>
-        <div class="auth-visual-stats">
-          <div class="auth-stat-card" data-reveal>
-            <span class="auth-stat-label">Sessions</span>
-            <span class="auth-stat-value">24</span>
-            <span class="auth-stat-delta auth-stat-delta--up">+12%</span>
-          </div>
-          <div class="auth-stat-card" data-reveal>
-            <span class="auth-stat-label">Latency</span>
-            <span class="auth-stat-value">218<span class="auth-stat-unit">ms</span></span>
-            <span class="auth-stat-delta">p50</span>
-          </div>
-          <div class="auth-stat-card" data-reveal>
-            <span class="auth-stat-label">Uptime</span>
-            <span class="auth-stat-value">99.9<span class="auth-stat-unit">%</span></span>
-            <span class="auth-stat-delta auth-stat-delta--up">live</span>
-          </div>
-        </div>
-        <div class="auth-visual-chart" aria-hidden="true">
-          <svg class="auth-spark" viewBox="0 0 320 80" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="auth-spark-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="rgba(168, 85, 247, 0.45)" />
-                <stop offset="100%" stop-color="rgba(168, 85, 247, 0)" />
-              </linearGradient>
-            </defs>
-            <path class="auth-spark-fill" d="M0,55 L40,48 L80,52 L120,38 L160,42 L200,28 L240,35 L280,22 L320,30 L320,80 L0,80 Z" fill="url(#auth-spark-grad)" />
-            <path class="auth-spark-line" d="M0,55 L40,48 L80,52 L120,38 L160,42 L200,28 L240,35 L280,22 L320,30" fill="none" stroke="rgba(192, 132, 252, 0.9)" stroke-width="2" vector-effect="non-scaling-stroke" />
-          </svg>
-          <div class="auth-chart-bars">
-            <span style="--h: 42%"></span><span style="--h: 68%"></span><span style="--h: 55%"></span>
-            <span style="--h: 82%"></span><span style="--h: 61%"></span><span style="--h: 74%"></span>
-            <span style="--h: 48%"></span><span style="--h: 88%"></span><span style="--h: 52%"></span>
-          </div>
-        </div>
+<div class="auth-aura auth-aura--shell">
+  <div class="auth-aura-layout">
+    <aside class="auth-aura-hero">
+      <div class="auth-aura-hero-bg" aria-hidden="true">
+        <div class="auth-aura-glaze-blob auth-aura-glaze-blob--a"></div>
+        <div class="auth-aura-glaze-blob auth-aura-glaze-blob--b"></div>
+        <div class="auth-aura-glaze-blob auth-aura-glaze-blob--c"></div>
+        <div class="auth-aura-halftone auth-aura-halftone--wash"></div>
+        <div class="auth-aura-halftone auth-aura-halftone--dots auth-aura-halftone--dots-wing"></div>
+        <div class="auth-aura-halftone auth-aura-halftone--dots auth-aura-halftone--dots-core"></div>
+        <div class="auth-aura-halftone auth-aura-halftone--dots auth-aura-halftone--dots-shift"></div>
+        <div class="auth-aura-halftone auth-aura-halftone--sheen"></div>
       </div>
-      {% endblock %}
+
+      <div class="auth-aura-hero-inner">
+        <header class="auth-aura-hero-top">
+          <div class="auth-aura-hero-top-row">
+            <div class="auth-aura-chip auth-aura-chip--wave" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 12v-2M8 10v4M12 7v10M16 10v4M20 12v-2"/></svg>
+            </div>
+            <a href="/" class="auth-aura-logo" aria-label="SYNQ home">
+              <img
+                class="auth-aura-logo-img"
+                src="/static/brand/synq-logo.png?v=1"
+                alt="SYNQ"
+                width="280"
+                height="70"
+                decoding="async"
+              />
+            </a>
+          </div>
+        </header>
+
+        <div class="auth-aura-hero-center">
+          {% block auth_visual %}
+          <div class="auth-aura-card">
+            <div class="auth-aura-tabs" role="tablist">
+              <span class="auth-aura-tab is-active" role="tab" aria-selected="true">
+                <span class="auth-aura-tab-ico" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                </span>
+                Voice &amp; agent
+              </span>
+              <span class="auth-aura-tab" role="tab" aria-selected="false">
+                <span class="auth-aura-tab-ico" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </span>
+                Desktop &amp; sync
+              </span>
+            </div>
+            <p class="auth-aura-card-copy">Speak naturally to open apps, search the web, and use Calendar and Gmail when connected. Desktop actions run on your PC; your console stays in sync with a secure session.</p>
+            <div class="auth-aura-pills">
+              <span class="auth-aura-pill is-active">
+                <span class="auth-aura-pill-ico" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8"/></svg></span>
+                Desktop control
+              </span>
+              <span class="auth-aura-pill">
+                <span class="auth-aura-pill-ico" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></span>
+                Voice agent
+              </span>
+              <span class="auth-aura-pill">
+                <span class="auth-aura-pill-ico" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></span>
+                Google sync
+              </span>
+              <span class="auth-aura-pill">
+                <span class="auth-aura-pill-ico" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+                Memory &amp; context
+              </span>
+            </div>
+          </div>
+          {% endblock %}
+        </div>
+
+        <footer class="auth-aura-hero-bottom">
+          {% block auth_tagline %}
+          <p class="auth-aura-tagline">One command away from a calmer workday.</p>
+          {% endblock %}
+          <div class="auth-aura-chip auth-aura-chip--letter" aria-hidden="true">
+            <span class="auth-aura-chip-letter">S</span>
+          </div>
+        </footer>
+      </div>
     </aside>
-    <main class="auth-split-main">
-      <div class="auth-split-card">
+    <div class="auth-aura-panel">
+      <header class="auth-aura-panel-top">
+        <nav class="auth-aura-panel-nav">{% block nav %}{% endblock %}</nav>
+      </header>
+      <div class="auth-aura-panel-body">
         {% block content %}{% endblock %}
       </div>
-    </main>
+    </div>
   </div>
 </div>
 {% endblock %}

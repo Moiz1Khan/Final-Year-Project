@@ -6,7 +6,6 @@ Run: uvicorn synq.web.app:app --reload --host 127.0.0.1 --port 8765
 
 from __future__ import annotations
 
-import json
 import os
 import shutil
 from pathlib import Path
@@ -24,16 +23,15 @@ from synq.auth.credentials_store import (
     save_user_secrets,
     user_data_dir,
 )
-from synq.auth.auth_token_file import auth_token_path, clear_auth_token, write_auth_token
+from synq.auth.auth_token_file import clear_auth_token, write_auth_token
 from synq.auth.jwt_tokens import create_access_token
-from synq.auth.session import active_session_path, clear_active_session, write_active_session
+from synq.auth.session import clear_active_session, write_active_session
 from synq.auth.users import (
     any_login_eligible_user,
     claim_default_user,
     create_user,
     get_user,
     update_user_display_name,
-    user_count,
     verify_login,
 )
 from synq.api.router import router as synq_api_router
@@ -41,19 +39,27 @@ from synq.memory.db import init_db
 from synq.web.auth_session import browser_login
 from synq.web.google_oauth_config import google_oauth_enabled
 from synq.web.google_routes import router as google_oauth_router
+from synq.web.dashboard_service import (
+    build_dashboard_insights,
+    desktop_action_lines,
+    filter_activity_lines,
+    recent_conversation_feed,
+    voice_delta_percent,
+)
 
 BASE_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 app = FastAPI(title="Synq Console")
+# Mount static files before routers so /static/* is never shadowed.
+static_dir = BASE_DIR / "static"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
 app.include_router(synq_api_router, prefix="/api")
 app.include_router(google_oauth_router)
 _session_secret = os.getenv("SYNQ_SESSION_SECRET", "").strip() or "dev-change-me-set-SYNQ_SESSION_SECRET"
 app.add_middleware(SessionMiddleware, secret_key=_session_secret, same_site="lax")
-
-static_dir = BASE_DIR / "static"
-if static_dir.exists():
-    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 
 @app.on_event("startup")
@@ -211,29 +217,23 @@ async def logout(request: Request):
     return RedirectResponse("/login", status_code=302)
 
 
-def _dashboard_context(user_id: int) -> dict:
-    has_jwt = auth_token_path().exists()
-    voice_synced = False
-    try:
-        p = active_session_path()
-        if p.exists():
-            data = json.loads(p.read_text(encoding="utf-8"))
-            voice_synced = int(data.get("user_id", 0)) == int(user_id)
-    except Exception:
-        pass
-    existing = load_user_secrets(user_id)
-    google_configured = bool(
-        existing
-        and (
-            (existing.google_token_json or "").strip()
-            or (existing.google_client_secrets_path or "").strip()
-        )
-    )
-    return {
-        "has_jwt": has_jwt,
-        "voice_synced": voice_synced,
-        "google_configured": google_configured,
+def _dash_page_context(
+    request: Request,
+    *,
+    user,
+    dash_active: str,
+    activity_query: str = "",
+    **extra,
+) -> dict:
+    ctx = {
+        "request": request,
+        "user": user,
+        "dash_active": dash_active,
+        "activity_query": activity_query,
+        **_auth_context(),
     }
+    ctx.update(extra)
+    return ctx
 
 
 @app.get("/app", response_class=HTMLResponse)
@@ -242,9 +242,54 @@ async def app_home(request: Request):
     if not uid:
         return RedirectResponse("/login", status_code=302)
     u = get_user(uid)
-    ctx = {"request": request, "user": u, "user_count": user_count()}
-    ctx.update(_dashboard_context(int(uid)))
-    return templates.TemplateResponse(request, "dashboard.html", ctx)
+    insights = build_dashboard_insights(int(uid))
+    voice_delta = voice_delta_percent(insights.voice_turns_7d, insights.voice_turns_prev_7d)
+    ctx = _dash_page_context(
+        request,
+        user=u,
+        dash_active="overview",
+        activity_query="",
+        insights=insights,
+        voice_delta=voice_delta,
+    )
+    return templates.TemplateResponse(
+        request,
+        "dashboard.html",
+        context=ctx,
+    )
+
+
+@app.get("/app/activity", response_class=HTMLResponse)
+async def app_activity(request: Request):
+    uid = request.session.get("user_id")
+    if not uid:
+        return RedirectResponse("/login", status_code=302)
+    u = get_user(uid)
+    q = (request.query_params.get("q") or "").strip()
+    convo = recent_conversation_feed(int(uid), limit=50)
+    if q:
+        ql = q.lower()
+        convo = [c for c in convo if ql in (c.get("content") or "").lower() or ql in (c.get("role") or "").lower()]
+    desktop = filter_activity_lines(desktop_action_lines(50), q)
+    ctx = _dash_page_context(
+        request,
+        user=u,
+        dash_active="activity",
+        activity_query=q,
+        convo_feed=convo,
+        desktop_lines=desktop,
+    )
+    return templates.TemplateResponse(request, "activity.html", context=ctx)
+
+
+@app.get("/app/features", response_class=HTMLResponse)
+async def app_features(request: Request):
+    uid = request.session.get("user_id")
+    if not uid:
+        return RedirectResponse("/login", status_code=302)
+    u = get_user(uid)
+    ctx = _dash_page_context(request, user=u, dash_active="features", activity_query="")
+    return templates.TemplateResponse(request, "features.html", context=ctx)
 
 
 @app.get("/app/credentials", response_class=HTMLResponse)

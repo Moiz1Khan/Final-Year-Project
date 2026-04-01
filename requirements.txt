@@ -36,6 +36,8 @@ httpx>=0.27.0
 # Context Monitoring (Windows)
 psutil>=5.9.0
 pywin32>=306
+pyautogui>=0.9.54
+pyperclip>=1.9.0
 
 # Google integrations (Calendar + Gmail)
 google-api-python-client>=2.120.0

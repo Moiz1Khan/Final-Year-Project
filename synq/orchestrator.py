@@ -4,6 +4,7 @@ API mode: OpenAINLU + SkillRegistry + MemoryStore
 Local mode: IntentHandler (pattern-based)
 """
 
+import re
 from typing import Optional
 import threading
 
@@ -55,7 +56,13 @@ class Orchestrator:
             if self._nlu is None:
                 from synq.services.openai_nlu import OpenAINLU
                 from synq.skills.registry import get_registry
-                from synq.skills import time_skill, general_skill, activity_skill, productivity_skill
+                from synq.skills import (
+                    activity_skill,
+                    desktop_skill,
+                    general_skill,
+                    productivity_skill,
+                    time_skill,
+                )
                 self._registry = get_registry()
                 self._nlu = OpenAINLU(api_key=self.api_key, agent_name=self.agent_name)
                 self._nlu.register_modules(self._registry.list_for_nlu())
@@ -66,6 +73,26 @@ class Orchestrator:
             if self._handler is None:
                 from synq.nlu.intent_handler import IntentHandler
                 self._handler = IntentHandler(self.agent_name)
+
+    def _looks_like_desktop_action(self, text: str) -> bool:
+        t = (text or "").strip().lower()
+        if not t:
+            return False
+        patterns = (
+            r"^(open|launch)\s+",
+            r"^(go to|open website)\s+",
+            r"^(search|search web for|google)\s+",
+            r"^(open folder|open file|open path)\s+",
+            r"^(press|shortcut)\s+",
+            r"^(type|copy this)\s+",
+            r"^(run routine|start routine)\s+",
+            r"\b(play pause|pause music|resume music|next track|previous track|volume up|volume down|switch window)\b",
+            r"\bopen\b.*\b(chrome|vs code|vscode|visual studio code|notepad|explorer|browser|youtube|spotify)\b",
+            r"\bi want you to\b.*\b(open|launch|search)\b",
+            r"\b(create|make)\s+.*\bpython\s+file\b",
+            r"\byoutube\b",
+        )
+        return any(re.search(p, t) for p in patterns)
 
     def process(
         self,
@@ -86,6 +113,14 @@ class Orchestrator:
             context = build_context(self._memory, user_id, text)
 
         if self.use_api and self._nlu:
+            # Fast path: deterministic desktop commands bypass LLM routing.
+            if self._registry and self._looks_like_desktop_action(text):
+                fast = self._registry.execute("desktop", "desktop_action", {}, text)
+                if fast and fast.response:
+                    if self._memory:
+                        self._persist_turn_async(user_id, text, fast.response)
+                    return fast.response
+
             result = self._nlu.process(text, context=context)
             response = result.response
             if result.module and self._registry:

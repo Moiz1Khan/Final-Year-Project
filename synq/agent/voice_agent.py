@@ -355,6 +355,8 @@ def create_agent_from_config(
             silence_threshold=audio_cfg.get("silence_threshold", 1000),
             silence_duration=audio_cfg.get("silence_duration", 0.9),
             device_index=device_index,
+            max_wait_speech_seconds=float(audio_cfg.get("max_wait_speech_seconds", 25)),
+            max_record_seconds=float(audio_cfg.get("max_record_seconds", 120)),
         )
         return RemoteVoiceAgent(
             client=client,
@@ -389,6 +391,8 @@ def create_agent_from_config(
         silence_threshold=audio_cfg.get("silence_threshold", 1000),
         silence_duration=audio_cfg.get("silence_duration", 0.9),
         device_index=device_index,
+        max_wait_speech_seconds=float(audio_cfg.get("max_wait_speech_seconds", 25)),
+        max_record_seconds=float(audio_cfg.get("max_record_seconds", 120)),
     )
 
     if use_api:

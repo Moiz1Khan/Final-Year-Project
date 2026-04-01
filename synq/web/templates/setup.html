@@ -1,67 +1,99 @@
 {% extends "auth_split.html" %}
-{% block title %}Setup — Synq{% endblock %}
+{% block title %}Setup | Synq{% endblock %}
 {% block nav %}
-<span class="auth-split-muted">First-time setup</span>
+<span class="auth-aura-nav-muted">First-time setup</span>
 {% endblock %}
 {% block auth_visual %}
-<div class="auth-visual-stack">
-  <p class="auth-visual-eyebrow">Installation</p>
-  <h2 class="auth-visual-title">Initialize Synq on this machine.</h2>
-  <p class="auth-visual-copy">Create the owner account and attach your Google OAuth client. AI provider keys stay on the server.</p>
-  <div class="auth-visual-stats">
-    <div class="auth-stat-card" data-reveal>
-      <span class="auth-stat-label">Step</span>
-      <span class="auth-stat-value">1<span class="auth-stat-unit">/2</span></span>
-      <span class="auth-stat-delta">Account</span>
-    </div>
-    <div class="auth-stat-card" data-reveal>
-      <span class="auth-stat-label">Step</span>
-      <span class="auth-stat-value">2<span class="auth-stat-unit">/2</span></span>
-      <span class="auth-stat-delta">Google</span>
-    </div>
-    <div class="auth-stat-card" data-reveal>
-      <span class="auth-stat-label">Mode</span>
-      <span class="auth-stat-value">Local</span>
-      <span class="auth-stat-delta auth-stat-delta--up">secure</span>
-    </div>
+<div class="auth-aura-card">
+  <div class="auth-aura-tabs" role="tablist">
+    <span class="auth-aura-tab is-active" role="tab" aria-selected="true">
+      <span class="auth-aura-tab-ico" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </span>
+      Owner account
+    </span>
+    <span class="auth-aura-tab" role="tab" aria-selected="false">
+      <span class="auth-aura-tab-ico" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
+      </span>
+      Google OAuth
+    </span>
   </div>
-  <div class="auth-visual-chart" aria-hidden="true">
-    <svg class="auth-spark" viewBox="0 0 320 80" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="auth-spark-grad-setup" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="rgba(129, 140, 248, 0.4)" />
-          <stop offset="100%" stop-color="rgba(129, 140, 248, 0)" />
-        </linearGradient>
-      </defs>
-      <path d="M0,60 L50,45 L100,50 L150,32 L200,40 L250,25 L320,20 L320,80 L0,80 Z" fill="url(#auth-spark-grad-setup)" />
-      <path d="M0,60 L50,45 L100,50 L150,32 L200,40 L250,25 L320,20" fill="none" stroke="rgba(165, 180, 252, 0.95)" stroke-width="2" vector-effect="non-scaling-stroke" />
-    </svg>
-    <div class="auth-chart-bars">
-      <span style="--h: 38%"></span><span style="--h: 72%"></span><span style="--h: 58%"></span>
-      <span style="--h: 85%"></span><span style="--h: 64%"></span><span style="--h: 78%"></span>
-    </div>
+  <p class="auth-aura-card-copy">This install needs one admin user. Provider keys live on the server. After setup, sign in from any browser to manage credentials and voice sessions.</p>
+  <div class="auth-aura-pills">
+    <span class="auth-aura-pill is-active">
+      <span class="auth-aura-pill-ico" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></span>
+      Local console
+    </span>
+    <span class="auth-aura-pill">
+      <span class="auth-aura-pill-ico" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+      Encrypted secrets
+    </span>
+    <span class="auth-aura-pill">
+      <span class="auth-aura-pill-ico" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 7h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h3"/><path d="M12 12v10M9 7V5a3 3 0 0 1 6 0v2"/></svg></span>
+      Voice JWT
+    </span>
+    <span class="auth-aura-pill">
+      <span class="auth-aura-pill-ico" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg></span>
+      Optional Gmail
+    </span>
   </div>
 </div>
 {% endblock %}
+{% block auth_tagline %}
+<p class="auth-aura-tagline">One setup away from your voice workspace.</p>
+{% endblock %}
 {% block content %}
-<h1 class="auth-form-title">Welcome to Synq</h1>
-<p class="auth-form-lead">Create your owner account and connect Google OAuth. Shared AI keys are configured on the server—not in this form.</p>
-{% if error %}<p class="auth-form-error">{{ error }}</p>{% endif %}
-<form method="post" action="/setup" enctype="multipart/form-data" class="form-stack auth-form-fields auth-form-fields--setup">
-  <div class="auth-form-section">
-    <h2 class="auth-form-section-title">Account</h2>
-    <label class="auth-field"><span class="auth-field-label">Display name</span><input name="name" required autocomplete="name" /></label>
-    <label class="auth-field"><span class="auth-field-label">Email <span class="hint">(optional)</span></span><input name="email" type="email" autocomplete="email" /></label>
-    <label class="auth-field"><span class="auth-field-label">Password</span><input name="password" type="password" required minlength="8" autocomplete="new-password" /></label>
-    <label class="auth-field"><span class="auth-field-label">Confirm password</span><input name="password2" type="password" required minlength="8" autocomplete="new-password" /></label>
+<h1 class="auth-aura-title">Welcome to Synq</h1>
+<p class="auth-aura-subtitle">Create the owner account. Google OAuth files are optional if you configure the server with environment variables.</p>
+{% if error %}<p class="auth-aura-error">{{ error }}</p>{% endif %}
+
+<form method="post" action="/setup" enctype="multipart/form-data" class="auth-aura-form auth-aura-form--setup">
+  <div class="auth-aura-form-section">
+    <h2 class="auth-aura-section-title">Account</h2>
+    <label class="auth-aura-field">
+      <span class="auth-aura-label">Display name</span>
+      <input name="name" required autocomplete="name" placeholder="Admin" />
+    </label>
+    <label class="auth-aura-field">
+      <span class="auth-aura-label">Email <span class="auth-aura-optional">optional</span></span>
+      <input name="email" type="email" autocomplete="email" placeholder="Enter your email" />
+    </label>
+    <label class="auth-aura-field">
+      <span class="auth-aura-label">Password</span>
+      <span class="auth-password-wrap">
+        <input name="password" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters" />
+        <button type="button" class="auth-password-toggle" aria-label="Show password" aria-pressed="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </span>
+    </label>
+    <label class="auth-aura-field">
+      <span class="auth-aura-label">Confirm password</span>
+      <span class="auth-password-wrap">
+        <input name="password2" type="password" required minlength="8" autocomplete="new-password" placeholder="Confirm password" />
+        <button type="button" class="auth-password-toggle" aria-label="Show password" aria-pressed="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </span>
+    </label>
   </div>
-  <div class="auth-form-section">
-    <h2 class="auth-form-section-title">Google OAuth client</h2>
-    <p class="auth-form-hint">Desktop / installed-app JSON from Google Cloud Console.</p>
-    <label class="auth-field"><span class="auth-field-label">Client secret JSON path</span><input name="google_client_secrets_path" placeholder="C:\path\to\client_secret....json" autocomplete="off" /></label>
-    <label class="auth-field"><span class="auth-field-label">Or upload client JSON</span><input type="file" name="google_client_file" accept=".json,application/json" /></label>
-    <label class="auth-field"><span class="auth-field-label">Token file path <span class="hint">(optional)</span></span><input name="google_token_path" autocomplete="off" /></label>
+  <div class="auth-aura-form-section">
+    <h2 class="auth-aura-section-title">Google OAuth <span class="auth-aura-optional">optional</span></h2>
+    <p class="auth-aura-hint">Installed-app JSON from Google Cloud, or set <code class="auth-aura-code">SYNQ_GOOGLE_OAUTH_CLIENT_SECRETS_PATH</code> on the server.</p>
+    <label class="auth-aura-field">
+      <span class="auth-aura-label">Path to client secret JSON</span>
+      <input name="google_client_secrets_path" placeholder="C:\path\to\client_secret....json" autocomplete="off" />
+    </label>
+    <label class="auth-aura-field">
+      <span class="auth-aura-label">Or upload JSON</span>
+      <input type="file" name="google_client_file" accept=".json,application/json" />
+    </label>
+    <label class="auth-aura-field">
+      <span class="auth-aura-label">Token path <span class="auth-aura-optional">optional</span></span>
+      <input name="google_token_path" placeholder="Auto after Connect Google" autocomplete="off" />
+    </label>
   </div>
-  <button type="submit" class="btn-auth-submit">Finish setup</button>
+  <button type="submit" class="auth-aura-submit">Complete setup</button>
 </form>
 {% endblock %}

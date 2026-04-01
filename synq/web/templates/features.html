@@ -1,0 +1,52 @@
+{% extends "base_dashboard_aura.html" %}
+{% block title %}Features | Synq{% endblock %}
+{% block dash_content %}
+<div class="dash-bento">
+  <article class="dash-card dash-span-12">
+    <p class="dash-eyebrow">Product</p>
+    <h2>How Synq works</h2>
+    <p class="lead">Four steps: speak → understand → act → respond. Your session stays tied to this browser after login; the voice client uses the same account via <span class="code-inline">data/auth_token.json</span>.</p>
+    <ol class="dash-flow-list">
+      <li><strong>Speak</strong> — Wake word, face gate, or open listening (see your <span class="code-inline">config.yaml</span>).</li>
+      <li><strong>Understand</strong> — Cloud or local pipeline maps speech to intents and skills.</li>
+      <li><strong>Act</strong> — Productivity, Gmail, Calendar, desktop routines, and more.</li>
+      <li><strong>Respond</strong> — Spoken replies; this console shows stats and history.</li>
+    </ol>
+  </article>
+
+  <article class="dash-card dash-span-6" id="calendar">
+    <p class="dash-eyebrow">Calendar</p>
+    <h2>Meetings</h2>
+    <p class="lead">Schedule events, request Meet links, and see upcoming items on the overview when Google is connected.</p>
+    <p class="lead">Try: &ldquo;Schedule a meeting tomorrow at 3pm.&rdquo;</p>
+  </article>
+  <article class="dash-card dash-span-6" id="mail">
+    <p class="dash-eyebrow">Gmail</p>
+    <h2>Mail</h2>
+    <p class="lead">List unread, hear summaries, and send mail with your connected Google account.</p>
+    <p class="lead">Try: &ldquo;What are my unread emails?&rdquo;</p>
+  </article>
+  <article class="dash-card dash-span-6" id="tasks">
+    <p class="dash-eyebrow">Tasks</p>
+    <h2>Tasks &amp; reminders</h2>
+    <p class="lead">Tasks live in your Synq database; open counts appear on the overview.</p>
+    <p class="lead">Try: &ldquo;Add a task to finish the report Friday.&rdquo;</p>
+  </article>
+  <article class="dash-card dash-span-6" id="desktop">
+    <p class="dash-eyebrow">Desktop</p>
+    <h2>PC control</h2>
+    <p class="lead">Open apps, sites, search, media keys, and routines — restricted by allowlists in <span class="code-inline">config.yaml</span>.</p>
+    <p class="lead">Try: &ldquo;Open Chrome&rdquo; or &ldquo;Search the web for Python asyncio.&rdquo;</p>
+  </article>
+  <article class="dash-card dash-span-6" id="voice">
+    <p class="dash-eyebrow">Voice</p>
+    <h2>Agent</h2>
+    <p class="lead">Run <span class="code-inline">python scripts/run_voice_agent.py</span> (or <span class="code-inline">main.py</span>) on the machine with the mic. Use <span class="code-inline">voice.backend: synq_cloud</span> to pair with this server.</p>
+  </article>
+  <article class="dash-card dash-span-6" id="memory">
+    <p class="dash-eyebrow">Context</p>
+    <h2>Memory</h2>
+    <p class="lead">Conversation turns are stored for context and show up under Activity. Optional context monitoring can log foreground app usage separately.</p>
+  </article>
+</div>
+{% endblock %}

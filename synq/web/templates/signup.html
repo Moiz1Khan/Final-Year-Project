@@ -1,24 +1,64 @@
 {% extends "auth_split.html" %}
-{% block title %}Create account — Synq{% endblock %}
+{% block title %}Create an account | Synq{% endblock %}
 {% block nav %}
-<a href="/login" class="auth-split-link">Sign in</a>
+<a href="/login" class="auth-aura-nav-link">Log in</a>
 {% endblock %}
 {% block content %}
-<h1 class="auth-form-title">Create your account</h1>
-<p class="auth-form-lead">Get a personal workspace. Connect Google and voice tools from the console after you sign in.</p>
-{% if error %}<p class="auth-form-error">{{ error }}</p>{% endif %}
-{% if google_oauth_enabled %}
-<p style="margin:0 0 1rem;">
-  <a href="/auth/google" class="btn-auth-google">Continue with Google</a>
-</p>
-<p class="auth-form-lead" style="margin:0 0 0.75rem;text-align:center;font-size:0.85rem;">or create with email</p>
-{% endif %}
-<form method="post" action="/signup" class="form-stack auth-form-fields">
-  <label class="auth-field"><span class="auth-field-label">Display name</span><input name="name" required autocomplete="name" placeholder="Alex Chen" /></label>
-  <label class="auth-field"><span class="auth-field-label">Email <span class="hint">(optional)</span></span><input name="email" type="email" autocomplete="email" placeholder="you@company.com" /></label>
-  <label class="auth-field"><span class="auth-field-label">Password</span><input name="password" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters" /></label>
-  <label class="auth-field"><span class="auth-field-label">Confirm password</span><input name="password2" type="password" required minlength="8" autocomplete="new-password" placeholder="Repeat password" /></label>
-  <button type="submit" class="btn-auth-submit">Create account</button>
+<h1 class="auth-aura-title">Create an Account</h1>
+<p class="auth-aura-subtitle">You are a few moments away from getting started.</p>
+{% if error %}<p class="auth-aura-error">{{ error }}</p>{% endif %}
+
+<form method="post" action="/signup" class="auth-aura-form" id="signup-form">
+  <label class="auth-aura-check">
+    <input type="checkbox" name="marketing_opt_in" value="1" />
+    <span>Send me tips, updates and offers</span>
+  </label>
+
+  <label class="auth-aura-field">
+    <span class="auth-aura-label">Name</span>
+    <input name="name" required autocomplete="name" placeholder="Enter your name" />
+  </label>
+  <label class="auth-aura-field">
+    <span class="auth-aura-label">Email <span class="auth-aura-optional">optional</span></span>
+    <input name="email" type="email" autocomplete="email" placeholder="Enter your email" />
+  </label>
+  <label class="auth-aura-field">
+    <span class="auth-aura-label">Password</span>
+    <span class="auth-password-wrap">
+      <input name="password" type="password" required minlength="8" autocomplete="new-password" placeholder="Enter your password" />
+      <button type="button" class="auth-password-toggle" aria-label="Show password" aria-pressed="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </span>
+  </label>
+  <label class="auth-aura-field">
+    <span class="auth-aura-label">Confirm password</span>
+    <span class="auth-password-wrap">
+      <input name="password2" type="password" required minlength="8" autocomplete="new-password" placeholder="Confirm your password" />
+      <button type="button" class="auth-password-toggle" aria-label="Show password" aria-pressed="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </span>
+  </label>
+
+  <p class="auth-aura-terms">By signing up, you accept Synq&rsquo;s <a href="#" target="_blank" rel="noopener">privacy policy</a> and <a href="#" target="_blank" rel="noopener">terms of service</a>.</p>
+
+  <button type="submit" class="auth-aura-submit">Sign up</button>
 </form>
-<p class="auth-form-foot">Already have an account? <a href="/login">Sign in</a></p>
+
+<p class="auth-aura-divider"><span>or</span></p>
+<div class="auth-aura-oauth">
+  {% if google_oauth_enabled %}
+  <a href="/auth/google" class="btn-auth-oauth btn-auth-oauth--google">
+    <svg class="btn-auth-oauth-ico" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9.003 18c2.43 0 4.467-.806 5.956-2.18L12.05 13.56c-.806.54-1.836.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.96v2.332C2.44 15.983 5.485 18 9.003 18z"/><path fill="#FBBC05" d="M3.964 10.712c-.18-.54-.282-1.117-.282-1.712s.102-1.172.282-1.712V4.956H.957C.348 6.175 0 7.55 0 9s.348 2.825.957 4.044l3.007-2.332z"/><path fill="#EA4335" d="M9.003 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.464.891 11.426 0 9.003 0 5.485 0 2.44 2.017.96 4.956L3.967 7.287c.708-2.127 2.692-3.707 5.036-3.707z"/></svg>
+    Continue with Google
+  </a>
+  {% endif %}
+  <button type="button" class="btn-auth-oauth btn-auth-oauth--microsoft" disabled title="Coming soon">
+    <svg class="btn-auth-oauth-ico" width="18" height="18" viewBox="0 0 21 21" aria-hidden="true"><path fill="#f25022" d="M1 1h9v9H1z"/><path fill="#00a4ef" d="M1 11h9v9H1z"/><path fill="#7fba00" d="M11 1h9v9h-9z"/><path fill="#ffb900" d="M11 11h9v9h-9z"/></svg>
+    Continue with Microsoft
+  </button>
+</div>
+
+<p class="auth-aura-foot">Already have an account? <a href="/login">Log in</a></p>
 {% endblock %}

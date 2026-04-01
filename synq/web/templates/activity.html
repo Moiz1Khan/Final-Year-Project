@@ -1,0 +1,44 @@
+{% extends "base_dashboard_aura.html" %}
+{% block title %}Activity | Synq{% endblock %}
+{% block dash_content %}
+<div class="dash-bento">
+  <article class="dash-card dash-span-12">
+    <p class="dash-eyebrow">Timeline</p>
+    <h2>Activity</h2>
+    <p class="lead">Voice and assistant turns from your database{% if activity_query %} (filtered){% endif %}, plus recent desktop actions from this machine&rsquo;s log when present.</p>
+  </article>
+
+  <article class="dash-card dash-span-6">
+    <p class="dash-eyebrow">Voice &amp; memory</p>
+    <h2>Recent messages</h2>
+    {% if convo_feed %}
+    <ul class="dash-activity-list">
+      {% for row in convo_feed %}
+      <li class="dash-activity-row">
+        <span class="dash-activity-role">{{ row.role }}</span>
+        <time class="dash-activity-time">{{ row.created_at }}</time>
+        <p class="dash-activity-text">{{ row.content }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="lead">No conversation rows yet. Speak to the agent to populate this list.</p>
+    {% endif %}
+  </article>
+
+  <article class="dash-card dash-span-6">
+    <p class="dash-eyebrow">Desktop</p>
+    <h2>Desktop action log</h2>
+    <p class="lead">Tail of <span class="code-inline">data/desktop_actions.log</span> (shared log file on this PC).</p>
+    {% if desktop_lines %}
+    <ul class="dash-desktop-list">
+      {% for line in desktop_lines %}
+      <li><code class="dash-desktop-line">{{ line }}</code></li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="lead">No log file or empty.</p>
+    {% endif %}
+  </article>
+</div>
+{% endblock %}

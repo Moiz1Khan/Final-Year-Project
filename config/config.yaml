@@ -57,10 +57,14 @@ wake_word:
   phrases: ["hey synq", "hi synq", "synq", "hey sync", "hi sync", "sync"]
 
 # Audio (PyAudio) - lower silence_duration = faster reply
+# If recording "never ends": RMS never crosses silence_threshold (wrong mic, quiet input).
+# Fix: lower silence_threshold (e.g. 400) or set device to your mic index (integer).
 audio:
   sample_rate: 16000
   silence_threshold: 1000
   silence_duration: 0.45
+  max_wait_speech_seconds: 25
+  max_record_seconds: 120
   interrupt_threshold: 50000
   interrupt_chunks: 3
   device: null
@@ -96,3 +100,28 @@ email_monitoring:
   poll_seconds: 30
   log_notifications: false    # Keep terminal quiet while listening
   speak_notifications: false  # Keep silent; assistant responds only when asked
+
+# Desktop actions (Phase 1)
+# mode:
+# - ask: allow read-only style actions; block typing/shortcuts/routines
+# - auto_trusted: execute trusted actions
+# - dry_run: do not execute, only report what would happen
+desktop_actions:
+  enabled: true
+  mode: "ask"
+  trusted_apps: ["chrome", "code", "notepad", "explorer", "spotify"]
+  trusted_domains: ["google.com", "youtube.com", "github.com", "linkedin.com"]
+  trusted_paths:
+    - "C:\\Users\\Moiz Khan\\newFYP"
+    - "C:\\Users\\Moiz Khan\\Documents"
+    - "C:\\Users\\Moiz Khan\\Downloads"
+  routines:
+    morning routine:
+      - action: open_app
+        app: chrome
+      - action: open_url
+        url: "https://calendar.google.com"
+      - action: open_url
+        url: "https://mail.google.com"
+      - action: wait_ms
+        ms: 1200

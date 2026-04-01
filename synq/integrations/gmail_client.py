@@ -48,6 +48,29 @@ def list_unread(*, max_results: int = 10) -> List[str]:
     return [m.get("id", "") for m in msgs if m.get("id")]
 
 
+def get_inbox_unread_count() -> int:
+    """Unread count in INBOX (requires gmail.readonly)."""
+    service = _build_service(GMAIL_READ_SCOPES)
+    lbl = service.users().labels().get(userId="me", id="INBOX").execute()
+    return int(lbl.get("messagesUnread") or 0)
+
+
+def count_messages_newer_than_days(days: int) -> int:
+    """Approximate count of messages in the account newer than N days (cap at listed batch)."""
+    service = _build_service(GMAIL_READ_SCOPES)
+    r = (
+        service.users()
+        .messages()
+        .list(userId="me", q=f"newer_than:{int(days)}d", maxResults=500)
+        .execute()
+    )
+    n = len(r.get("messages") or [])
+    est = r.get("resultSizeEstimate")
+    if est is not None:
+        return max(n, int(est))
+    return n
+
+
 def get_message_metadata(message_id: str) -> Dict[str, Any]:
     """
     Fetch message metadata and snippet.

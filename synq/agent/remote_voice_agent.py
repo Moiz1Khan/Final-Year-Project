@@ -15,6 +15,11 @@ import sounddevice as sd
 
 from synq.audio.recorder import PyAudioRecorder, get_rms
 from synq.services.synq_cloud_client import SynqCloudClient
+from synq.context_monitoring.voice_snapshot import (
+    build_voice_context_injection,
+    looks_like_desktop_fact_question,
+)
+from synq.skills.desktop_skill import DESKTOP_SKILL_FALLBACK_REPLY, DesktopSkill
 
 
 class RemoteVoiceAgent:
@@ -65,6 +70,13 @@ class RemoteVoiceAgent:
         frames = []
         started = False
         silent_chunks = 0
+        chunks_no_speech = 0
+        max_wait_chunks = int(
+            self.recorder.max_wait_speech_seconds * sample_rate / chunk
+        )
+        max_total_chunks = int(self.recorder.max_record_seconds * sample_rate / chunk)
+        total_chunks = 0
+        last_hint_chunk = 0
         try:
             while self._running:
                 try:
@@ -72,15 +84,37 @@ class RemoteVoiceAgent:
                 except OSError:
                     continue
                 rms = get_rms(data)
+                total_chunks += 1
                 if rms > silence_threshold:
                     started = True
                     silent_chunks = 0
+                    chunks_no_speech = 0
                     frames.append(data)
                 elif started:
                     frames.append(data)
                     silent_chunks += 1
                     if silent_chunks >= max_silent:
                         break
+                else:
+                    chunks_no_speech += 1
+                    if (
+                        chunks_no_speech >= last_hint_chunk + int(15 * sample_rate / chunk)
+                        and chunks_no_speech < max_wait_chunks
+                    ):
+                        print(
+                            "[LISTEN] Still waiting for speech... "
+                            "(wrong mic, quiet room, or silence_threshold too high - see config audio.*)"
+                        )
+                        last_hint_chunk = chunks_no_speech
+                    if chunks_no_speech >= max_wait_chunks:
+                        print(
+                            "[WARN] No speech detected before timeout. "
+                            "Set audio.device to your mic index, or lower audio.silence_threshold."
+                        )
+                        break
+                if started and total_chunks >= max_total_chunks:
+                    print("[WARN] Max recording length reached; stopping.")
+                    break
         finally:
             stream.stop_stream()
             stream.close()
@@ -162,7 +196,10 @@ class RemoteVoiceAgent:
         print("Synq Voice Agent (Synq Cloud API)")
         print("=" * 50)
         print(f"Active user id: {self.active_user_id}")
-        print("STT + NLU + TTS run on the API server (JWT).")
+        print(
+            "STT + NLU + TTS use the API (JWT); desktop actions run on this PC. "
+            "Screen/window questions include a local snapshot so answers match what is open."
+        )
         print("Press Ctrl+C to exit\n")
 
         try:
@@ -184,7 +221,15 @@ class RemoteVoiceAgent:
                 print(f"[HEARD] \"{text}\"")
                 t_logic = time.perf_counter()
                 try:
-                    reply = self.client.chat(text)
+                    local = DesktopSkill().handle("desktop_action", {}, text.strip())
+                    if local.response != DESKTOP_SKILL_FALLBACK_REPLY:
+                        reply = local.response
+                    elif looks_like_desktop_fact_question(text):
+                        reply = self.client.chat(
+                            f"{build_voice_context_injection()}\n\nUser question: {text}"
+                        )
+                    else:
+                        reply = self.client.chat(text)
                 except Exception as e:
                     print(f"[API Chat Error] {e}")
                     continue

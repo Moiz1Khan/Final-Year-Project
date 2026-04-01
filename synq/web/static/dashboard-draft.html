@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en" class="dash-draft-root">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard draft | Synq</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Synq login (auth-aura) palette + WALLEX-style bento layout */
+    .dash-draft-root {
+      --dash-accent: #008b8b;
+      --dash-accent-rgb: 0, 139, 139;
+      --dash-ink: #111111;
+      --dash-text: #1a1a1a;
+      --dash-muted: #666666;
+      --dash-dim: #999999;
+      --dash-border: #e8e8e8;
+      --dash-card: rgba(255, 255, 255, 0.92);
+      --dash-mist: #f0fdff;
+      --dash-radius: 18px;
+      --dash-radius-sm: 12px;
+      --dash-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+      --dash-shadow-lg: 0 28px 64px rgba(0, 0, 0, 0.08), 0 12px 28px rgba(0, 0, 0, 0.05);
+    }
+
+    * { box-sizing: border-box; }
+    .dash-draft-body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      color: var(--dash-text);
+      background: linear-gradient(
+        105deg,
+        var(--dash-mist) 0%,
+        #ffffff 38%,
+        #fafefe 55%,
+        #f5fbfc 72%,
+        #ffffff 100%
+      );
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .dash-draft-shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1.25rem 2.5rem;
+    }
+
+    /* —— Top bar (WALLEX-style, login colors) —— */
+    .dash-topbar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 1rem 0 1.25rem;
+      border-bottom: 1px solid var(--dash-border);
+      margin-bottom: 1.5rem;
+    }
+    .dash-topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      color: var(--dash-ink);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+    .dash-topbar-brand img {
+      height: 36px;
+      width: auto;
+      display: block;
+    }
+    .dash-topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex: 1;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    @media (max-width: 900px) {
+      .dash-topbar-nav { order: 3; width: 100%; justify-content: flex-start; }
+    }
+    .dash-topbar-nav a {
+      padding: 0.5rem 0.85rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--dash-muted);
+      text-decoration: none;
+      transition: color 0.15s, background 0.15s;
+    }
+    .dash-topbar-nav a:hover { color: var(--dash-ink); background: rgba(0, 0, 0, 0.04); }
+    .dash-topbar-nav a.is-active { color: var(--dash-accent); background: rgba(var(--dash-accent-rgb), 0.08); }
+
+    .dash-search {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--dash-border);
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      min-width: min(200px, 100%);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+    }
+    .dash-search svg { flex-shrink: 0; opacity: 0.4; }
+    .dash-search input {
+      border: none;
+      background: transparent;
+      font: inherit;
+      font-size: 0.85rem;
+      color: var(--dash-text);
+      width: 100%;
+      min-width: 0;
+    }
+    .dash-search input::placeholder { color: var(--dash-dim); }
+    .dash-search input:focus { outline: none; }
+
+    .dash-topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .dash-btn-ghost {
+      padding: 0.55rem 1rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: 1px solid var(--dash-border);
+      background: #fff;
+      color: var(--dash-text);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .dash-btn-ghost:hover { border-color: #ccc; }
+    .dash-btn-primary {
+      padding: 0.55rem 1.15rem;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: none;
+      background: var(--dash-ink);
+      color: #fff;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+    .dash-btn-primary:hover { opacity: 0.92; }
+
+    .dash-banner {
+      margin: 0 0 1.25rem;
+      padding: 0.65rem 1rem;
+      border-radius: var(--dash-radius-sm);
+      background: rgba(255, 248, 220, 0.9);
+      border: 1px solid #f5e6a8;
+      color: #854d0e;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* —— Bento grid —— */
+    .dash-bento {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 1024px) {
+      .dash-bento { grid-template-columns: 1fr 1fr; }
+      .dash-span-3, .dash-span-4, .dash-span-5, .dash-span-6, .dash-span-8 { grid-column: span 2 !important; }
+      .dash-span-12 { grid-column: span 2 !important; }
+    }
+    @media (max-width: 640px) {
+      .dash-bento { grid-template-columns: 1fr; }
+      .dash-span-3, .dash-span-4, .dash-span-5, .dash-span-6, .dash-span-8, .dash-span-12 { grid-column: span 1 !important; }
+    }
+
+    .dash-span-3 { grid-column: span 3; }
+    .dash-span-4 { grid-column: span 4; }
+    .dash-span-5 { grid-column: span 5; }
+    .dash-span-6 { grid-column: span 6; }
+    .dash-span-8 { grid-column: span 8; }
+    .dash-span-12 { grid-column: span 12; }
+
+    .dash-card {
+      position: relative;
+      border-radius: var(--dash-radius);
+      padding: 1.25rem 1.35rem;
+      background: var(--dash-card);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: var(--dash-shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+    .dash-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(var(--dash-accent-rgb), 0.06) 0%, transparent 45%);
+      opacity: 0.9;
+    }
+    .dash-card > * { position: relative; z-index: 1; }
+
+    .dash-card--glow {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(224, 247, 250, 0.5) 100%);
+      border-color: rgba(var(--dash-accent-rgb), 0.12);
+      box-shadow: var(--dash-shadow), 0 0 0 1px rgba(var(--dash-accent-rgb), 0.06);
+    }
+    .dash-card--glow::before {
+      background: radial-gradient(ellipse 80% 80% at 100% 0%, rgba(var(--dash-accent-rgb), 0.14) 0%, transparent 55%),
+                  linear-gradient(135deg, rgba(178, 235, 242, 0.35) 0%, transparent 50%);
+    }
+
+    .dash-eyebrow {
+      margin: 0 0 0.5rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--dash-accent);
+    }
+    .dash-card h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--dash-ink);
+      letter-spacing: -0.02em;
+    }
+    .dash-card p.lead {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--dash-muted);
+      line-height: 1.5;
+    }
+
+    /* Quick actions strip */
+    .dash-quick {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .dash-quick-item {
+      flex: 1;
+      min-width: 72px;
+      max-width: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.75rem 0.5rem;
+      border-radius: var(--dash-radius-sm);
+      text-decoration: none;
+      color: var(--dash-muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-align: center;
+      transition: background 0.15s, color 0.15s;
+      border: 1px solid transparent;
+    }
+    .dash-quick-item:hover {
+      background: rgba(var(--dash-accent-rgb), 0.06);
+      color: var(--dash-accent);
+    }
+    .dash-quick-ico {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 1px solid var(--dash-border);
+      color: var(--dash-accent);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Mini market-style row */
+    .dash-mini-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.65rem;
+    }
+    @media (max-width: 900px) { .dash-mini-row { grid-template-columns: repeat(2, 1fr); } }
+    .dash-mini {
+      padding: 0.85rem 1rem;
+      border-radius: var(--dash-radius-sm);
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--dash-border);
+    }
+    .dash-mini-label { font-size: 0.72rem; color: var(--dash-dim); font-weight: 600; margin-bottom: 0.25rem; }
+    .dash-mini-value { font-size: 1.35rem; font-weight: 700; color: var(--dash-ink); letter-spacing: -0.03em; }
+    .dash-mini-delta { font-size: 0.72rem; font-weight: 600; margin-top: 0.35rem; }
+    .dash-mini-delta--up { color: var(--dash-accent); }
+    .dash-mini-delta--down { color: #b45309; }
+    .dash-spark {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 28px;
+      margin-top: 0.5rem;
+    }
+    .dash-spark span {
+      flex: 1;
+      border-radius: 2px;
+      background: linear-gradient(180deg, rgba(var(--dash-accent-rgb), 0.85), rgba(var(--dash-accent-rgb), 0.25));
+      min-height: 4px;
+    }
+    .dash-spark span:nth-child(1) { height: 35%; }
+    .dash-spark span:nth-child(2) { height: 55%; }
+    .dash-spark span:nth-child(3) { height: 40%; }
+    .dash-spark span:nth-child(4) { height: 70%; }
+    .dash-spark span:nth-child(5) { height: 50%; }
+    .dash-spark span:nth-child(6) { height: 85%; }
+    .dash-spark span:nth-child(7) { height: 60%; }
+
+    /* Summary + donut */
+    .dash-split-big {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      align-items: center;
+    }
+    @media (max-width: 720px) { .dash-split-big { grid-template-columns: 1fr; text-align: center; } }
+
+    .dash-stat-hero {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      font-weight: 700;
+      color: var(--dash-ink);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin: 0.25rem 0 0.5rem;
+    }
+    .dash-stat-sub { font-size: 0.88rem; color: var(--dash-muted); margin: 0 0 1rem; max-width: 28ch; }
+    @media (max-width: 720px) { .dash-stat-sub { margin-left: auto; margin-right: auto; } }
+
+    .dash-donut-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .dash-donut {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--dash-accent) 0deg 120deg,
+        #2dd4bf 120deg 210deg,
+        #67e8f9 210deg 300deg,
+        #cbd5e1 300deg 360deg
+      );
+      padding: 14px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    }
+    .dash-donut-hole {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--dash-dim);
+    }
+    .dash-donut-hole strong {
+      font-size: 1.35rem;
+      font-family: "DM Sans", sans-serif;
+      color: var(--dash-ink);
+      letter-spacing: -0.02em;
+    }
+    .dash-legend {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: 0.8rem;
+    }
+    .dash-legend li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.45rem;
+      color: var(--dash-muted);
+    }
+    .dash-legend i {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .dash-actions-row { display: flex; gap: 0.65rem; flex-wrap: wrap; margin-top: 0.25rem; }
+    .dash-btn-outline {
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      border: 1px solid var(--dash-border);
+      background: #fff;
+      color: var(--dash-text);
+      cursor: pointer;
+    }
+    .dash-btn-outline:hover { border-color: var(--dash-accent); color: var(--dash-accent); }
+
+    /* Side card: levels / progress */
+    .dash-levels-title { margin: 0 0 1rem; font-size: 0.95rem; font-weight: 700; color: var(--dash-ink); }
+    .dash-progress-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #e8e8e8;
+      overflow: hidden;
+      margin-bottom: 0.85rem;
+    }
+    .dash-progress-fill {
+      height: 100%;
+      width: 68%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--dash-accent), #2dd4bf);
+    }
+    .dash-steps {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--dash-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .dash-steps span.is-on { color: var(--dash-accent); }
+
+    /* Table */
+    .dash-tabs {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .dash-tab {
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--dash-muted);
+      cursor: pointer;
+    }
+    .dash-tab.is-active {
+      background: var(--dash-ink);
+      color: #fff;
+    }
+    .dash-tab:hover:not(.is-active) { background: rgba(0, 0, 0, 0.04); }
+
+    .dash-table-wrap { overflow-x: auto; }
+    table.dash-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .dash-table th {
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      color: var(--dash-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.68rem;
+      border-bottom: 1px solid var(--dash-border);
+    }
+    .dash-table td {
+      padding: 0.75rem 0.75rem;
+      border-bottom: 1px solid #f0f0f0;
+      color: var(--dash-text);
+    }
+    .dash-table tr:hover td { background: rgba(var(--dash-accent-rgb), 0.04); }
+    .dash-pill {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .dash-pill--ok { background: rgba(var(--dash-accent-rgb), 0.12); color: var(--dash-accent); }
+    .dash-pill--mail { background: #e0f2fe; color: #0369a1; }
+    .dash-pill--meet { background: #f3e8ff; color: #7c3aed; }
+
+    .dash-micro {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 22px;
+    }
+    .dash-micro span {
+      width: 4px;
+      border-radius: 1px;
+      background: rgba(var(--dash-accent-rgb), 0.35);
+    }
+    .dash-micro span:nth-child(1) { height: 40%; }
+    .dash-micro span:nth-child(2) { height: 70%; }
+    .dash-micro span:nth-child(3) { height: 55%; }
+    .dash-micro span:nth-child(4) { height: 90%; }
+    .dash-micro span:nth-child(5) { height: 45%; }
+  </style>
+</head>
+<body class="dash-draft-body">
+  <div class="dash-draft-shell">
+    <header class="dash-topbar">
+      <a class="dash-topbar-brand" href="#">
+        <img src="brand/synq-logo.png?v=1" alt="Synq" width="120" height="32" />
+      </a>
+      <nav class="dash-topbar-nav" aria-label="Console">
+        <a class="is-active" href="#">Overview</a>
+        <a href="#">Activity</a>
+        <a href="#">Features</a>
+        <a href="/docs" target="_blank" rel="noopener">API</a>
+      </nav>
+      <label class="dash-search" aria-label="Search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" placeholder="Search activity…" />
+      </label>
+      <div class="dash-topbar-actions">
+        <a class="dash-btn-ghost" href="#">Help</a>
+        <a class="dash-btn-primary" href="#">Open console</a>
+      </div>
+    </header>
+
+    <p class="dash-banner">Layout &amp; styling draft — mint / teal palette matches login. Numbers and rows are placeholders until Gmail, Calendar, and usage logging are wired.</p>
+
+    <div class="dash-bento">
+      <!-- Row: promo cards -->
+      <article class="dash-card dash-card--glow dash-span-4">
+        <p class="dash-eyebrow">Voice</p>
+        <h2>One command away</h2>
+        <p class="lead">Speak to run skills: calendar, mail, tasks, and desktop actions within your trusted lists.</p>
+      </article>
+      <article class="dash-card dash-card--glow dash-span-4">
+        <p class="dash-eyebrow">Google</p>
+        <h2>Mail &amp; meetings</h2>
+        <p class="lead">When connected, Synq can summarize unread mail and schedule events with Meet links.</p>
+      </article>
+      <article class="dash-card dash-card--glow dash-span-4">
+        <p class="dash-eyebrow">Desktop</p>
+        <h2>On-device control</h2>
+        <p class="lead">Open apps and sites, search the web, and run routines safely via allowlisted actions.</p>
+      </article>
+
+      <!-- Quick actions -->
+      <article class="dash-card dash-span-12">
+        <p class="dash-eyebrow">Shortcuts</p>
+        <h2>Quick actions</h2>
+        <p class="lead" style="margin-bottom: 0.85rem;">Same tone as login hero pills — jump points for a future console (static for now).</p>
+        <div class="dash-quick">
+          <a class="dash-quick-item" href="#"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>Calendar</a>
+          <a class="dash-quick-item" href="#"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg></span>Mail</a>
+          <a class="dash-quick-item" href="#"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Tasks</a>
+          <a class="dash-quick-item" href="#"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>Desktop</a>
+          <a class="dash-quick-item" href="#"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></span>Voice</a>
+          <a class="dash-quick-item" href="#"><span class="dash-quick-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Memory</a>
+        </div>
+      </article>
+
+      <!-- Mini metrics -->
+      <article class="dash-card dash-span-12">
+        <p class="dash-eyebrow">Synq at a glance</p>
+        <h2>Live metrics (mock)</h2>
+        <p class="lead" style="margin-bottom: 1rem;">Compact tiles like a market overview — swap crypto for your productivity signals.</p>
+        <div class="dash-mini-row">
+          <div class="dash-mini">
+            <div class="dash-mini-label">Voice turns (7d)</div>
+            <div class="dash-mini-value">24</div>
+            <div class="dash-mini-delta dash-mini-delta--up">+12% vs last week</div>
+            <div class="dash-spark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="dash-mini">
+            <div class="dash-mini-label">Meetings (period)</div>
+            <div class="dash-mini-value">7</div>
+            <div class="dash-mini-delta dash-mini-delta--up">On calendar</div>
+            <div class="dash-spark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="dash-mini">
+            <div class="dash-mini-label">Unread mail</div>
+            <div class="dash-mini-value">12</div>
+            <div class="dash-mini-delta dash-mini-delta--down">Inbox</div>
+            <div class="dash-spark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="dash-mini">
+            <div class="dash-mini-label">Open tasks</div>
+            <div class="dash-mini-value">5</div>
+            <div class="dash-mini-delta dash-mini-delta--up">Due this week: 2</div>
+            <div class="dash-spark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Big summary + donut -->
+      <article class="dash-card dash-span-8">
+        <p class="dash-eyebrow">Summary</p>
+        <h2>What you’ve done with Synq</h2>
+        <div class="dash-split-big">
+          <div>
+            <p class="dash-stat-sub">Weighted mix of activity types this week (illustrative).</p>
+            <p class="dash-stat-hero">High engagement</p>
+            <p class="dash-stat-sub">Calendar and mail skills led; desktop actions steady.</p>
+            <div class="dash-actions-row">
+              <button type="button" class="dash-btn-primary">View full report</button>
+              <button type="button" class="dash-btn-outline">Export</button>
+            </div>
+          </div>
+          <div class="dash-donut-wrap">
+            <div class="dash-donut" role="img" aria-label="Activity mix: 40 percent calendar, 25 email, 20 desktop, 15 other">
+              <div class="dash-donut-hole"><span>Mix</span><strong>100%</strong></div>
+            </div>
+            <ul class="dash-legend">
+              <li><i style="background: var(--dash-accent);"></i> Calendar &amp; meetings</li>
+              <li><i style="background: #2dd4bf;"></i> Email</li>
+              <li><i style="background: #67e8f9;"></i> Desktop</li>
+              <li><i style="background: #cbd5e1;"></i> Other skills</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="dash-card dash-span-4">
+        <p class="dash-eyebrow">Goals</p>
+        <h2>Weekly momentum</h2>
+        <p class="dash-levels-title">Voice usage tier</p>
+        <div class="dash-progress-track"><div class="dash-progress-fill"></div></div>
+        <div class="dash-steps">
+          <span class="is-on">L1</span>
+          <span class="is-on">L2</span>
+          <span class="is-on">L3</span>
+          <span>L4</span>
+          <span>L5</span>
+        </div>
+        <p class="lead" style="margin-top: 1.1rem;">Replace with real targets (e.g. “3 meetings scheduled” or “inbox zero streak”) when you define them.</p>
+      </article>
+
+      <!-- Table -->
+      <article class="dash-card dash-span-12">
+        <p class="dash-eyebrow">Recent</p>
+        <h2>Meetings &amp; mail</h2>
+        <p class="lead" style="margin-bottom: 1rem;">Tabbed list like a market table — sample rows only.</p>
+        <div class="dash-tabs" role="tablist">
+          <button type="button" class="dash-tab is-active" role="tab" aria-selected="true">All</button>
+          <button type="button" class="dash-tab" role="tab">Meetings</button>
+          <button type="button" class="dash-tab" role="tab">Mail</button>
+        </div>
+        <div class="dash-table-wrap">
+          <table class="dash-table">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Title / subject</th>
+                <th>When</th>
+                <th>Status</th>
+                <th>Spark</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="dash-pill dash-pill--meet">Meet</span></td>
+                <td>FYP review with supervisor</td>
+                <td>Apr 2 · 2:00 PM</td>
+                <td><span class="dash-pill dash-pill--ok">Upcoming</span></td>
+                <td><div class="dash-micro" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div></td>
+              </tr>
+              <tr>
+                <td><span class="dash-pill dash-pill--mail">Mail</span></td>
+                <td>Re: Project timeline — unread</td>
+                <td>Today · 9:14 AM</td>
+                <td><span class="dash-pill dash-pill--ok">Unread</span></td>
+                <td><div class="dash-micro" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div></td>
+              </tr>
+              <tr>
+                <td><span class="dash-pill dash-pill--mail">Mail</span></td>
+                <td>Newsletter: Weekly digest</td>
+                <td>Yesterday</td>
+                <td><span class="dash-pill" style="background:#f1f5f9;color:#64748b;">Read</span></td>
+                <td><div class="dash-micro" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div></td>
+              </tr>
+              <tr>
+                <td><span class="dash-pill dash-pill--meet">Meet</span></td>
+                <td>Team standup</td>
+                <td>Mar 31 · 10:00 AM</td>
+                <td><span class="dash-pill" style="background:#f1f5f9;color:#64748b;">Done</span></td>
+                <td><div class="dash-micro" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </div>
+</body>
+</html>
